@@ -116,6 +116,9 @@ FOREACH( index 0 1 2 3 4 5 )
   add_test(itkQuadEdgeMeshAddFaceTest1_${index} ${COMMON_TESTS2}
     itkQuadEdgeMeshAddFaceTest1 ${index} )
 ENDFOREACH( index )
+
+add_test( itkQuadEdgeMeshPolylineTest ${COMMON_TESTS2}
+  itkQuadEdgeMeshPolylineTest)
 add_test(itkQuadEdgeMeshAddFaceTest2 ${COMMON_TESTS2}
   itkQuadEdgeMeshAddFaceTest2)
 add_test(itkQuadEdgeMeshDeleteEdgeTest ${COMMON_TESTS2}
@@ -579,6 +582,7 @@ SET(BasicTests2_SRCS
 itkQuadEdgeMeshNoPointConstTest.cxx
 itkQuadEdgeTest1.cxx
 itkGeometricalQuadEdgeTest1.cxx
+itkQuadEdgeMeshPolylineTest.cxx
 itkQuadEdgeMeshAddFaceTest1.cxx
 itkQuadEdgeMeshAddFaceTest2.cxx
 itkQuadEdgeMeshBasicLayerTest.cxx

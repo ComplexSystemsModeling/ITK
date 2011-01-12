@@ -152,7 +152,7 @@ public:
   /**  Cell Visitor interfaces */
   enum CellGeometry { VERTEX_CELL = 0, LINE_CELL, TRIANGLE_CELL,
                       QUADRILATERAL_CELL, POLYGON_CELL, TETRAHEDRON_CELL, HEXAHEDRON_CELL,
-                      QUADRATIC_EDGE_CELL, QUADRATIC_TRIANGLE_CELL,
+                      QUADRATIC_EDGE_CELL, QUADRATIC_TRIANGLE_CELL, POLYLINE_CELL,
                       LAST_ITK_CELL, MAX_ITK_CELLS = 255 };
 
   /** Types needed to contour the cells */

@@ -150,6 +150,7 @@ REGISTER_TEST(itkQuadEdgeTest1);
 REGISTER_TEST(itkQuadEdgeMeshNoPointConstTest);
 REGISTER_TEST(itkGeometricalQuadEdgeTest1);
 // QuadEdgeMesh - the complete structure
+REGISTER_TEST(itkQuadEdgeMeshPolylineTest);
 REGISTER_TEST(itkQuadEdgeMeshPointTest1);
 REGISTER_TEST(itkQuadEdgeMeshAddFaceTest1);
 REGISTER_TEST(itkQuadEdgeMeshAddFaceTest2);

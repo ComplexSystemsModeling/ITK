@@ -26,6 +26,7 @@
 #include "itkHexahedronCell.h"
 #include "itkTetrahedronCell.h"
 #include "itkQuadraticTriangleCell.h"
+#include "itkPolylineCell.h"
 #include "itkPolygonCell.h"
 
 #include "itkCellInterfaceVisitor.h"
@@ -271,6 +272,13 @@ int itkQuadEdgeMeshCellInterfaceTest(int, char* [] )
    */
   typedef itk::VertexCell<CellInterfaceType> VertexCellType;
   status = TestCellInterface("Vertex", new VertexCellType);
+  if (status != 0)
+    {
+    return EXIT_FAILURE;
+    }
+
+  typedef itk::PolylineCell<CellInterfaceType> PolylineCellType;
+  status = TestCellInterface("Polyline", new PolylineCellType);
   if (status != 0)
     {
     return EXIT_FAILURE;

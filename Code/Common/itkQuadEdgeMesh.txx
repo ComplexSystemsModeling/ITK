@@ -399,6 +399,7 @@ void QuadEdgeMesh< TPixel, VDimension, TTraits >
     PointIdentifier numPoint = cell->GetNumberOfPoints();
     PointIdIterator pointId = cell->PointIdsBegin();
     PointIdIterator endId = cell->PointIdsEnd();
+
     // Edge
     if ( numPoint == 2 )
       {
@@ -409,20 +410,36 @@ void QuadEdgeMesh< TPixel, VDimension, TTraits >
         this->AddEdge(*pointId, *temp);
         }
       }
-    // polygons
-    else if ( cell->GetDimension() == 2 )
+    // polygons or polylines
+    else
       {
-      PointIdList points;
-      while ( pointId != endId )
+
+      // 1-manifold with more than 2 points = polyline
+      if( cell->GetDimension() == 1 )
         {
-        points.push_back(*pointId);
-        pointId++;
         }
-      // NOTE ALEX: here
-      this->AddFace(points);
+
+      // 2-manifold = surface cell = polygon
+      if ( cell->GetDimension() == 2 )
+        {
+        PointIdList points;
+        while ( pointId != endId )
+          {
+          points.push_back(*pointId);
+          pointId++;
+          }
+        // NOTE ALEX: here
+        this->AddFace(points);
+        }
+
+      if( cell->GetDimension() > 2 )
+        {
+        // NOT SUPPORTED - QE is for 2-Manifolds only:
+        }
+
+      cell.ReleaseOwnership();
+      delete ( cell.GetPointer() );
       }
-    cell.ReleaseOwnership();
-    delete ( cell.GetPointer() );
     }
 }
 

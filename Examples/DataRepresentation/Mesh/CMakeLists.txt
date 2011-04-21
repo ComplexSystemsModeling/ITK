@@ -5,7 +5,7 @@ add_executable(PointSet1 PointSet1.cxx )
 target_link_libraries(PointSet1 ${ITK_LIBRARIES})
 
 add_executable(SimplexMesh SimplexMesh.cxx )
-target_link_libraries(SimplexMesh ITKCommon)
+target_link_libraries(SimplexMesh ${ITK_LIBRARIES})
 
 add_executable(PointSet2 PointSet2.cxx )
 target_link_libraries(PointSet2 ${ITK_LIBRARIES})

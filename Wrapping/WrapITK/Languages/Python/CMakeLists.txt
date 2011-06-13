@@ -361,7 +361,7 @@ macro(END_WRAP_LIBRARY_PYTHON)
 
 
   # set some var reused later
-  set(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
+  set(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}Module.i")
   set(lib ${WRAPPER_LIBRARY_NAME}Python)
   set(python_file "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${lib}.py")
   set(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}Python.cpp")
@@ -448,13 +448,13 @@ macro(END_WRAP_MODULE_PYTHON group_name)
 
   set(base_name ${group_name})
 
-  if("${group_name}" STREQUAL "itkVectorContainer")
+ if("${group_name}" STREQUAL "itkVectorContainer")
     # add a template definition for the superclass which is not in ITK
     set(text )
     foreach(d ${WRAP_ITK_DIMS})
       foreach(t ${WRAP_ITK_SCALAR})
-        set(text "${text}%template(vectoritkLevelSetNode${t}${d}) std::vector< itkLevelSetNode${t}${d} >;\n")
-        ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkLevelSetNode${t}${d}" "${ITKT_LSN${t}${d}}")
+        #set(text "${text}%template(vectoritkLevelSetNode${t}${d}) std::vector< itkLevelSetNode${t}${d} >;\n")
+        #ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkLevelSetNode${t}${d}" "${ITKT_LSN${t}${d}}")
       endforeach(t)
 
       set(text "${text}%template(vectoritkVectorD${d}) std::vector< itkVectorD${d} >;\n")
@@ -494,6 +494,11 @@ macro(END_WRAP_MODULE_PYTHON group_name)
     # add a template definition for the superclass which is not in ITK
     set(text )
     foreach(d ${WRAP_ITK_DIMS})
+      foreach(t ${WRAP_ITK_SCALAR})
+        set(text "${text}%template(vectoritkLevelSetNode${t}${d}) std::vector< itkLevelSetNode${t}${d} >;\n")
+        ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkLevelSetNode${t}${d}" "${ITKT_LSN${t}${d}}")
+      endforeach(t)
+
       set(text "${text}%template(mapULitkQuadEdgeMeshPointF${d}) std::map< unsigned long, itkQuadEdgeMeshPointF${d}, std::less< unsigned long > >;\n")
       ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "mapULitkQuadEdgeMeshPointF${d}" "unsigned long, itk::QuadEdgeMeshPoint< float, ${d} >")
 

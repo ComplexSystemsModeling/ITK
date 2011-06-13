@@ -138,7 +138,7 @@ macro(END_WRAP_LIBRARY_JAVA)
   WRAP_ITK_INSTALL(/Configuration/Typedefs/java
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${WRAPPER_LIBRARY_NAME}_ext.i")
 
-  set(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
+  set(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}Module.i")
 
   # create java wrapping binaries
   set(lib ${WRAPPER_LIBRARY_NAME}Java)

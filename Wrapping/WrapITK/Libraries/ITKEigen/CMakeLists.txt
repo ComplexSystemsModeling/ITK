@@ -1,0 +1,12 @@
+WRAP_LIBRARY(ITKEigen)
+
+set(WRAPPER_LIBRARY_GROUPS
+)
+
+set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIO-Base ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents ITKIO-PNG ITKMathematicalMorphology ITKNarrowBand ITKDistanceMap ITKSignedDistanceFunction ITKOptimizers ITKImageCompare ITKQuadEdgeMesh ITKFastMarching ITKLevelSets ITKAntiAlias ITKPolynomials ITKBiasCorrection ITKBioCell ITKIO-RAW ITKBlox ITKClassifiers ITKDeformableMesh ITKDeformationField ITKDiffusionTensorImage)
+
+set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
+
+AUTO_INCLUDE_MODULES()
+
+END_WRAP_LIBRARY()

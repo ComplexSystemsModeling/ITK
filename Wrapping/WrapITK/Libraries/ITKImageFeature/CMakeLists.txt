@@ -1,0 +1,12 @@
+WRAP_LIBRARY(ITKImageFeature)
+
+set(WRAPPER_LIBRARY_GROUPS
+  itkHessianRecursiveGaussianImageFilter
+)
+
+set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIO-Base ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient)
+
+set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
+
+AUTO_INCLUDE_MODULES()
+END_WRAP_LIBRARY()

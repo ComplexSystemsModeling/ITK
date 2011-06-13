@@ -1,11 +1,8 @@
 
-set(WRAP_ITK_LIBRARIES
-  VXLNumerics
-  Base
-)
+set(WRAP_ITK_LIBRARIES ITKCommon)
 
 # set Iterators library to OFF by default
-# it is currently usable only when applying patches to ITK, and will only
+# it is currently usable only when applying patches to , and will only
 # take place and time to build
 # TODO: remove this line when iterators will be usable without patch
 option(WRAP_Iterators "Build Iterators library." OFF)
@@ -18,39 +15,88 @@ else(USE_FFTWD OR USE_FFTWF)
 endif(USE_FFTWD OR USE_FFTWF)
 
 set(optional_libraries
-  Numerics
-  Transforms
-  SpatialObject
-  BinaryMorphology
-  Calculators
-  Compose
-  Interpolators  # is required by DeformableTransforms
-  Mesh  # is required by DeformableTransforms
-  DeformableTransforms
-  Denoising
-  DistanceMap
-  EdgesAndContours
-  FFT
-  FFTW
-  Filtering
-  IntensityFilters
-  IO
-  Iterators
-  LevelSet
-  Morphology
-  #Patented
-  PixelMath
-  Resize  # required by Registration
-  Registration
-  Review
-  SegmentationAndThreshold
-  SegmentationValidation
-  SimpleFilters
-  UnaryPixelMath
+ITKStatistics
+ITKTransform
+ITKImageFunction
+ITKImageFilterBase
+ITKImageGrid
+ITKFiniteDifference
+ITKCurvatureFlow
+ITKAnisotropicSmoothing
+ITKMesh
+ITKIOBase
+ITKSpatialObjects
+ITKImageCompose
+ITKImageStatistics
+ITKPath
+ITKImageIntensity
+ITKSmoothing
+ITKImageGradient
+ITKImageFeature
+ITKThresholding
+ITKConnectedComponents
+ITKIOPNG
+ITKMathematicalMorphology
+ITKNarrowBand
+ITKDistanceMap
+ITKSignedDistanceFunction
+ITKOptimizers
+ITKImageCompare
+ITKQuadEdgeMesh
+ITKFastMarching
+ITKLevelSets
+ITKAntiAlias
+ITKPolynomials
+ITKBiasCorrection
+ITKBioCell
+ITKIORAW
+ITKBlox
+ITKClassifiers
+ITKDeformableMesh
+ITKDeformationField
+ITKDiffusionTensorImage
+ITKEigen
+ITKRegistrationCommon
+ITKFEM
+ITKPDEDeformableRegistration
+ITKFEMRegistration
+ITKFFT
+ITKImageLabel
+ITKIOBioRad
+ITKIOBMP
+ITKIOGDCM
+ITKIOIPL
+ITKIOGE
+ITKIOGIPL
+ITKIOJPEG
+ITKIOTIFF
+ITKIOLSM
+ITKIOMeta
+ITKIONIFTI
+ITKIONRRD
+ITKIOSiemens
+ITKIOXML
+ITKIOSpatialObjects
+ITKIOStimulate
+ITKIOVTK
+ITKKLMRegionGrowing
+ITKLabelVoting
+ITKMarkovRandomFieldsClassifiers
+ITKNeuralNetworks
+ITKQuadEdgeMeshFiltering
+ITKRegionGrowing
+ITKSpatialFunction
+ITKVoronoi
+ITKVTK
+ITKWatersheds
+ITKDeprecated
+ITKIOHDF5
+ITKReview
+ITKTestKernel
 )
 
 foreach(library ${optional_libraries})
-  option(WRAP_${library} "Build ${library} library." ON)
+  option(WRAP_${library} "Build ${library} library." OFF)
   mark_as_advanced(WRAP_${library})
   if(WRAP_${library})
     set(WRAP_ITK_LIBRARIES ${WRAP_ITK_LIBRARIES} ${library})

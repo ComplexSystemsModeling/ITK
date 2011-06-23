@@ -91,7 +91,7 @@ ITKVTK
 ITKWatersheds
 ITKDeprecated
 ITKIOHDF5
-ITKReview
+ITKNonReview
 ITKTestKernel
 )
 

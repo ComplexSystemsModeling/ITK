@@ -361,7 +361,7 @@ macro(END_WRAP_LIBRARY_PYTHON)
 
 
   # set some var reused later
-  set(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}Module.i")
+  set(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
   set(lib ${WRAPPER_LIBRARY_NAME}Python)
   set(python_file "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${lib}.py")
   set(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}Python.cpp")

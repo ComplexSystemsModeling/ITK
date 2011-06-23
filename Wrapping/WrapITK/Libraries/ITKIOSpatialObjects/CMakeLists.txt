@@ -1,20 +1,9 @@
 WRAP_LIBRARY(ITKIOSpatialObjects)
 
 set(WRAPPER_LIBRARY_GROUPS
-  itkSpatialObjectProperty
-  itkAffineGeometryFrame
-  itkSpatialObjectBase
-  itkSpatialObjectPoint
-  itkContourSpatialObjectPoint
-  itkDTITubeSpatialObjectPoint
-  itkVesselTubeSpatialObjectPoint
-  itkPointBasedSpatialObject
-  itkImageSpatialObject
-  itkBlobSpatialObject
-  itkPolygonSpatialObject
 )
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIO-Base ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents ITKIO-PNG ITKMathematicalMorphology ITKNarrowBand ITKDistanceMap ITKSignedDistanceFunction ITKOptimizers ITKImageCompare ITKQuadEdgeMesh ITKFastMarching ITKLevelSets ITKAntiAlias ITKPolynomials ITKBiasCorrection ITKBioCell ITKIO-RAW ITKBlox ITKClassifiers ITKDeformableMesh ITKDeformationField ITKDiffusionTensorImage ITKEigen ITKRegistrationCommon ITKFEM ITKPDEDeformableRegistration ITKFEMRegistration ITKFFT ITKImageLabel ITKIO-BioRad ITKIO-BMP ITKIO-GDCM ITKIO-IPL ITKIO-GE ITKIO-GIPL ITKIO-JPEG ITKIO-TIFF ITKIO-LSM ITKIO-Meta ITKIO-NIFTI ITKIO-NRRD ITKIO-Siemens ITKIO-XML)
+set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents ITKIO-PNG ITKMathematicalMorphology ITKNarrowBand ITKDistanceMap ITKSignedDistanceFunction ITKOptimizers ITKImageCompare ITKQuadEdgeMesh ITKFastMarching ITKLevelSets ITKAntiAlias ITKPolynomials ITKBiasCorrection ITKBioCell ITKIO-RAW ITKBlox ITKClassifiers ITKDeformableMesh ITKDeformationField ITKDiffusionTensorImage ITKEigen ITKRegistrationCommon ITKFEM ITKPDEDeformableRegistration ITKFEMRegistration ITKFFT ITKImageLabel ITKIO-BioRad ITKIO-BMP ITKIO-GDCM ITKIO-IPL ITKIO-GE ITKIO-GIPL ITKIO-JPEG ITKIO-TIFF ITKIO-LSM ITKIO-Meta ITKIO-NIFTI ITKIO-NRRD ITKIO-Siemens ITKIO-XML)
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
 

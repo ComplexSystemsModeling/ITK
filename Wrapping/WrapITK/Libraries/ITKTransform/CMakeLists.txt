@@ -1,7 +1,7 @@
 WRAP_LIBRARY(ITKTransform)
 
 set(WRAPPER_LIBRARY_GROUPS
-  itkTransform
+  itkTransformBase
   itkMatrixOffsetTransformBase
   itkEuler2DTransform
   itkEuler3DTransform

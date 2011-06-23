@@ -3,8 +3,7 @@ WRAP_LIBRARY(ITKMesh)
 set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing)
 
 set(WRAPPER_LIBRARY_GROUPS
-  itkQuadEdgeMeshBase
-  itkMesh
+  itkMeshBase
   itkMeshSource
   itkImageToMeshFilter
   itkMeshToMeshFilter

@@ -1,7 +1,7 @@
 WRAP_LIBRARY(ITKIOBase)
 
 set(WRAPPER_LIBRARY_GROUPS
-  ITKIOBase
+  ITKIOBaseBase
 )
 
 set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh)

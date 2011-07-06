@@ -3,6 +3,14 @@ WRAP_INCLUDE("itkQuadEdgeMeshPoint.h")
 WRAP_INCLUDE("itkMesh.h")
 WRAP_INCLUDE("itkQuadEdgeMeshTraits.h")
 
+# for the time being this filter is only wrapped for 3D
+FILTER_DIMS(d3 3)
+if(d3)
+  WRAP_CLASS("itk::QuadEdgeMesh" POINTER)
+    WRAP_TEMPLATE("${ITKM_D}3" "${ITKT_D},3")
+  END_WRAP_CLASS()
+endif(d3)
+
 WRAP_CLASS("itk::MapContainer" POINTER)
   foreach(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("ULQEMPF${d}" "unsigned long, itk::QuadEdgeMeshPoint< float, ${d} >")

@@ -1,8 +1,7 @@
 WRAP_LIBRARY(ITKIOPNG)
 
-set(WRAPPER_LIBRARY_GROUPS
-  ITKIOBase
-)
+#set(WRAPPER_LIBRARY_GROUPS
+#)
 
 set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents)
 

@@ -1,21 +1,25 @@
+
 include(FindFFTW.cmake)
 
-WRAP_LIBRARY(ITKFFT)
-
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents ITKIOPNG ITKMathematicalMorphology ITKNarrowBand ITKImageCompare ITKQuadEdgeMesh ITKFastMarching ITKLevelSets ITKAntiAlias ITKIORAW ITKClassifiers ITKDeformableMesh ITKDeformationField ITKDiffusionTensorImage ITKEigen ITKRegistrationCommon ITKFEM ITKPDEDeformableRegistration ITKFEMRegistration)
+WRAP_LIBRARY("ITKFFT")
+set(WRAPPER_LIBRARY_DEPENDS ITKCommon ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents ITKIOPNG ITKMathematicalMorphology ITKNarrowBand ITKDistanceMap ITKImageCompare ITKQuadEdgeMesh ITKFastMarching ITKLevelSets ITKAntiAlias ITKIORAW ITKClassifiers ITKEigen ITKRegistrationCommon ITKPDEDeformableRegistration)
 
 # find needed libs
-set(libs ${ITK_LIBRARIES})
+set(libs ITKCommon ITKAlgorithms)
 
 if(WRAP_complex_float AND WRAP_float)
   if(FFTWF_LIB)
     set(libs ${libs} ${FFTWF_LIB})
+  else(FFTWF_LIB)
+    message("Warning: FFTWF not found automatically, some or all FFTW filters will not be wrapped. Set FFTWF parameters manually and try again.")
   endif(FFTWF_LIB)
 endif(WRAP_complex_float AND WRAP_float)
 
 if(WRAP_complex_double AND WRAP_double)
   if(FFTWD_LIB)
     set(libs ${libs} ${FFTWD_LIB})
+  else(FFTWD_LIB)
+    message("Warning: FFTWD not found automatically, some or all FFTW filters will not be wrapped. Set FFTWD parameters manually and try again.")
   endif(FFTWD_LIB)
 endif(WRAP_complex_double AND WRAP_double)
 

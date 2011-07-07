@@ -38,7 +38,6 @@ ITKConnectedComponents
 ITKIOPNG
 ITKMathematicalMorphology
 ITKNarrowBand
-ITKDistanceMap
 ITKImageCompare
 ITKQuadEdgeMesh
 ITKFastMarching
@@ -46,14 +45,11 @@ ITKLevelSets
 ITKAntiAlias
 ITKIORAW
 ITKClassifiers
-ITKDeformableMesh
 ITKDeformationField
-ITKDiffusionTensorImage
+ITKDistanceMap
 ITKEigen
 ITKRegistrationCommon
-ITKFEM
 ITKPDEDeformableRegistration
-ITKFEMRegistration
 ITKFFT
 ITKImageLabel
 ITKIOBioRad
@@ -69,28 +65,21 @@ ITKIOMeta
 ITKIONIFTI
 ITKIONRRD
 ITKIOSiemens
-ITKIOXML
 ITKIOSpatialObjects
 ITKIOStimulate
 ITKIOVTK
-ITKKLMRegionGrowing
 ITKLabelVoting
-ITKMarkovRandomFieldsClassifiers
-ITKNeuralNetworks
 ITKQuadEdgeMeshFiltering
 ITKRegionGrowing
-ITKSpatialFunction
 ITKVoronoi
-ITKVTK
 ITKWatersheds
-ITKDeprecated
 ITKIOHDF5
 ITKNonReview
 ITKTestKernel
 )
 
 foreach(library ${optional_libraries})
-  option(WRAP_${library} "Build ${library} library." OFF)
+  option(WRAP_${library} "Build ${library} library." ON)
   mark_as_advanced(WRAP_${library})
   if(WRAP_${library})
     set(WRAP_ITK_LIBRARIES ${WRAP_ITK_LIBRARIES} ${library})

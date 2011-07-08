@@ -1,4 +1,4 @@
-WRAP_LIBRARY(ITKNonReview)
+WRAP_LIBRARY(ITKReview)
 
 set(WRAPPER_LIBRARY_GROUPS
   itkImageToPathFilter

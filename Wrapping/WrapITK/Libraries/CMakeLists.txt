@@ -74,8 +74,7 @@ ITKRegionGrowing
 ITKVoronoi
 ITKWatersheds
 ITKIOHDF5
-ITKNonReview
-ITKTestKernel
+ITKReview
 )
 
 foreach(library ${optional_libraries})

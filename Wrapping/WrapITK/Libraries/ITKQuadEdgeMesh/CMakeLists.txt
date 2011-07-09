@@ -8,11 +8,10 @@ set(WRAPPER_LIBRARY_GROUPS
   itkQuadEdgeMeshPoint
   itkQuadEdgeMeshTraits
   itkQuadEdgeCellTraitsInfo
-  ITKQuadEdgeMeshBase
   itkQuadEdgeMeshLineCell
+  ITKQuadEdgeMeshBase
   # itkQuadEdgeMesh
   itkQuadEdgeMeshToQuadEdgeMeshFilter
-  itkQuadEdgeMeshLineCell
 )
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})

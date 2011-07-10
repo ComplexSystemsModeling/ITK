@@ -194,7 +194,7 @@ macro(END_WRAP_LIBRARY_JAVA)
     string(TOLOWER ${dep} ldep)
     set(dep_jar_file ${WRAP_ITK_LIB_DIRECTORY}/${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${ldep}.jar)
     set(class_path "${class_path}${dep_jar_file}${sep}")
-    set(WRAP_ITK_JAVA_MANIFEST "${WRAP_ITK_JAVA_MANIFEST} ${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${ldep}.jar")
+    set(WRAP_ITK_JAVA_MANIFEST "${WRAP_ITK_JAVA_MANIFEST} \n ${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${ldep}.jar ")
   endforeach(dep)
   foreach(ucp ${WRAP_ITK_JAVA_USER_CLASS_PATH})
     set(class_path "${class_path}${ucp}${sep}")
@@ -232,7 +232,7 @@ macro(END_WRAP_LIBRARY_JAVA)
       COMMAND ${Java_JAR_EXECUTABLE}
       ARGS
       -cmf "${CMAKE_CURRENT_BINARY_DIR}/manifest" "${java_jar_file_path}"
-      "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/*"
+      "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/"
       WORKING_DIRECTORY ${WRAP_ITK_JAVA_BIN_DIR}
       COMMENT "Creating java archive: ${java_jar_file_name}"
       )

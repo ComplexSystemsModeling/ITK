@@ -1,6 +1,6 @@
 WRAP_LIBRARY(ITKImageGrid)
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase)
+set(WRAPPER_LIBRARY_DEPENDS ITKImageFunction ITKImageFilterBase)
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
 

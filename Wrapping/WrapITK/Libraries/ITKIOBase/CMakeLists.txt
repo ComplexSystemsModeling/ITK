@@ -4,7 +4,7 @@ set(WRAPPER_LIBRARY_GROUPS
   ITKIOBaseBase
 )
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh)
+set(WRAPPER_LIBRARY_DEPENDS ITKCommon)
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
 

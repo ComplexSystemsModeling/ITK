@@ -2,7 +2,7 @@
 include(FindFFTW.cmake)
 
 WRAP_LIBRARY("ITKFFT")
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents ITKIOPNG ITKMathematicalMorphology ITKNarrowBand ITKDistanceMap ITKImageCompare ITKQuadEdgeMesh ITKFastMarching ITKLevelSets ITKAntiAlias ITKIORAW ITKClassifiers ITKEigen ITKRegistrationCommon ITKPDEDeformableRegistration)
+set(WRAPPER_LIBRARY_DEPENDS ITKCommon)
 
 # find needed libs
 set(libs ITKCommon ITKAlgorithms)

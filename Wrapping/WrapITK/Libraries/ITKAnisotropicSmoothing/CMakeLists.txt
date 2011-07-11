@@ -3,7 +3,7 @@ WRAP_LIBRARY(ITKAnisotropicSmoothing)
 set(WRAPPER_LIBRARY_GROUPS
 )
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow)
+set(WRAPPER_LIBRARY_DEPENDS ITKImageGrid ITKCurvatureFlow)
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
 

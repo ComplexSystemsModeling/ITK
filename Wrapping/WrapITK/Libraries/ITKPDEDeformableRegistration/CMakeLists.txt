@@ -3,7 +3,7 @@ WRAP_LIBRARY(ITKPDEDeformableRegistration)
 set(WRAPPER_LIBRARY_GROUPS
 )
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents ITKIOPNG ITKMathematicalMorphology ITKNarrowBand ITKImageCompare ITKQuadEdgeMesh ITKFastMarching ITKLevelSets ITKAntiAlias ITKIORAW ITKClassifiers ITKDeformationField ITKEigen ITKRegistrationCommon)
+set(WRAPPER_LIBRARY_DEPENDS ITKRegistrationCommon ITKFiniteDifference)
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
 

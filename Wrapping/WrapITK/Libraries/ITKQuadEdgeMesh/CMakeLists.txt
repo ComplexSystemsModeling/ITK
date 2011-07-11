@@ -1,6 +1,6 @@
 WRAP_LIBRARY(ITKQuadEdgeMesh)
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents ITKIOPNG ITKMathematicalMorphology ITKNarrowBand ITKImageCompare)
+set(WRAPPER_LIBRARY_DEPENDS ITKMesh)
 
 set(WRAPPER_LIBRARY_GROUPS
   itkQuadEdge

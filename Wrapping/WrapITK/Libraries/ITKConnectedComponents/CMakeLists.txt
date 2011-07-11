@@ -3,7 +3,7 @@ WRAP_LIBRARY(ITKConnectedComponents)
 set(WRAPPER_LIBRARY_GROUPS
 )
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding)
+set(WRAPPER_LIBRARY_DEPENDS ITKImageIntensity ITKThresholding ITKImageGrid)
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
 

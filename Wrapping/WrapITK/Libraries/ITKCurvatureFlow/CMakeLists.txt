@@ -5,7 +5,7 @@ set(WRAPPER_LIBRARY_GROUPS
   itkMinMaxCurvatureFlowImageFilter
 )
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference)
+set(WRAPPER_LIBRARY_DEPENDS ITKImageFilterBase ITKFiniteDifference)
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
 

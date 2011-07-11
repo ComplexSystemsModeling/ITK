@@ -3,7 +3,7 @@ WRAP_LIBRARY(ITKIOLSM)
 set(WRAPPER_LIBRARY_GROUPS
 )
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose ITKImageStatistics ITKPath ITKImageIntensity ITKSmoothing ITKImageGradient ITKImageFeature ITKThresholding ITKConnectedComponents ITKIOPNG ITKMathematicalMorphology ITKNarrowBand ITKImageCompare ITKQuadEdgeMesh ITKFastMarching ITKLevelSets ITKAntiAlias ITKIORAW ITKClassifiers ITKDeformationField  ITKEigen ITKRegistrationCommon ITKPDEDeformableRegistration ITKImageLabel ITKIOBioRad ITKIOBMP ITKIOGDCM ITKIOIPL ITKIOGE ITKIOGIPL ITKIOJPEG ITKIOTIFF)
+set(WRAPPER_LIBRARY_DEPENDS ITKIOTIFF)
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
 

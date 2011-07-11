@@ -1,6 +1,6 @@
 WRAP_LIBRARY(ITKImageStatistics)
 
-set(WRAPPER_LIBRARY_DEPENDS ITKCommon  ITKStatistics ITKTransform ITKImageFunction ITKImageFilterBase ITKImageGrid ITKFiniteDifference ITKCurvatureFlow ITKAnisotropicSmoothing ITKMesh ITKIOBase ITKSpatialObjects ITKImageCompose)
+set(WRAPPER_LIBRARY_DEPENDS ITKStatistics ITKImageFilterBase ITKSpatialObjects ITKImageCompose)
 
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ${ITK_LIBRARIES})
 

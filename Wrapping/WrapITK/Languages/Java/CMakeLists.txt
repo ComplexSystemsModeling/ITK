@@ -253,6 +253,15 @@ macro(END_WRAP_LIBRARY_JAVA)
     message("Warning: Unable to create java proxies for ${WRAPPER_LIBRARY_NAME}, nothing to get wrapped in this module.")
   endif(NOT "${WRAP_ITK_JAVA_CLASS_NAMES}" STREQUAL "")
 
+  # store the module dependencies to be able to reuse them easily - without recurssion
+  set(deps )
+  foreach(dep ${WRAPPER_LIBRARY_DEPENDS})
+    set(deps ${deps} ${WRAP_ITK_JAVA_${dep}_DEPS} ${dep})
+  endforeach()
+  if(deps)
+    list(REMOVE_DUPLICATES deps)
+  endif()
+  set(WRAP_ITK_JAVA_${WRAPPER_LIBRARY_NAME}_DEPS ${deps} CACHE INTERNALL "java module dependencies" FORCE)
 endmacro(END_WRAP_LIBRARY_JAVA)
 
 ###############################################################################
@@ -290,6 +299,11 @@ macro(END_WRAP_MODULE_JAVA group_name)
     string(TOLOWER ${dep} java_import_package_name)
     set(java_import_package_name ${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${java_import_package_name})
     set(WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS ${WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS} "import ${java_import_package_name}.*;")
+    foreach(ddep ${WRAP_ITK_JAVA_${dep}_DEPS})
+      string(TOLOWER ${ddep} java_import_package_name)
+      set(java_import_package_name ${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${java_import_package_name})
+      set(WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS ${WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS} "import ${java_import_package_name}.*;")
+    endforeach()
   endforeach(dep)
 
   set(swig_command ${SWIG_EXECUTABLE})

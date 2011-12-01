@@ -4,21 +4,36 @@
 #include "itkDefaultStaticMeshTraits.h"
 #include "itkVTKPolyDataWriter.h"
 #include "itkQuadEdgeMeshBoundaryEdgesMeshFunction.h"
+#include "itkQuadEdgeMeshTopologyChecker.h"
+#include "itkQuadEdgeMeshPolygonCell.h"
 
-//#include<conio.h>
+#include<conio.h>
 #include<iostream>
+
+typedef itk::QuadEdgeMesh< float, 3>   MeshType;
+
+template< class TMesh >
+std::vector< typename TMesh::PointType > GeneratePointCoordinates( const unsigned int& iN );
+template< class TMesh >
+void CreateSquareQuadMesh( typename TMesh::Pointer mesh );
+template< class TMesh >
+void CreateSquareTriangularMesh( typename TMesh::Pointer mesh );
+template< class TMesh >
+void CreateTetraedronMesh( typename TMesh::Pointer mesh );
+template< class TMesh >
+void CreateSamosa( typename TMesh::Pointer mesh );
 
 int main( int argc, char ** argv )
 {
 
-  typedef itk::QuadEdgeMesh< float, 3>   MeshType;
-
+//  typedef itk::QuadEdgeMesh< float, 3>   MeshType;
   typedef MeshType::PointIdentifier      PointIdentifier;
   typedef MeshType::CellIdentifier       CellIdentifier;
   typedef MeshType::PointsContainer      PointsContainer;
   typedef MeshType::CellsContainer       CellsContainer;
   typedef MeshType::CellType             CellType;
   typedef MeshType::PointIdList          PointIdList;
+  typedef MeshType::QEType               QuadEdgeType;
 
   typedef CellType::PointIdConstIterator PointIdConstIterator;
 
@@ -55,17 +70,24 @@ int main( int argc, char ** argv )
     return EXIT_FAILURE;
     }
 
-  MeshType::Pointer myMesh = mySphereMeshSource->GetOutput();
   MeshType::Pointer myDualMesh = MeshType::New();
+  MeshType::Pointer myPrimalMesh = MeshType::New();
+  //myPrimalMesh = MySphereMeshSource->GetOutput();
+  CreateSquareTriangularMesh <MeshType> (myPrimalMesh);
+
+  std::cout<<"\nNo. of Cells : "<<myPrimalMesh->GetNumberOfCells()
+	  <<"\nNo. of Edges : "<<myPrimalMesh->GetNumberOfEdges()
+	  <<"\nNo. of Faces : "<<myPrimalMesh->GetNumberOfFaces()
+	  <<"\nNo. of Points : "<<myPrimalMesh->GetNumberOfPoints()<<"\n\n";
 
   // take care of the primal cells => generate dual points
-  const CellsContainer *cells = myMesh->GetCells();
+  const CellsContainer *primalCells = myPrimalMesh->GetCells();
   std::map< CellIdentifier ,PointIdentifier >   DualPointFromPrimalTriangleLUT;
 
-  if( cells )
+  if( primalCells )
     {
-    CellIterator cellIterator = cells->Begin();
-    CellIterator cellEnd = cells->End();
+    CellIterator cellIterator = primalCells->Begin();
+    CellIterator cellEnd = primalCells->End();
 
     bool found = false;
     unsigned int numberOfDualPoints = 0;
@@ -81,7 +103,7 @@ int main( int argc, char ** argv )
         case 4: //POLYGON_CELL:
           if( cellIterator.Value()->GetNumberOfPoints() > 3 )
             {
-            std::cout << "toto" << std::endl;
+            std::cout << "\n \n toto" << std::endl;
             found = true;
             }
           else
@@ -97,7 +119,7 @@ int main( int argc, char ** argv )
             d_point[2] = 0.0;
             while( current != end )
               {
-              PointType point = myMesh->GetPoint( *current );
+              PointType point = myPrimalMesh->GetPoint( *current );
               //std::cout << point << std::endl;
               for( unsigned int i =0; i < 3; i++ ) d_point[i] += point[i];
               current++;
@@ -123,7 +145,7 @@ int main( int argc, char ** argv )
     }
 
   // take care of the primal points => generate dual cells
-  const PointsContainer *primalPoints = myMesh->GetPoints();
+  const PointsContainer *primalPoints = myPrimalMesh->GetPoints();
   const PointsContainer *dualPoints   = myDualMesh->GetPoints();
 
   if( primalPoints )
@@ -133,8 +155,6 @@ int main( int argc, char ** argv )
 
     while( pointIterator != pointEnd )
       {
-      typedef MeshType::QEType QuadEdgeType;
-
       // grab the QEdge
       PointType point = pointIterator.Value();
       QuadEdgeType * start = point.GetEdge();
@@ -148,8 +168,7 @@ int main( int argc, char ** argv )
       do
         {
         // get the id of the face on the left
-        QuadEdgeType::DualOriginRefType leftTriangle;
-        leftTriangle = current->GetLeft();
+        QuadEdgeType::DualOriginRefType leftTriangle = current->GetLeft();
 
         // push the dual point ID to the point ID list
         pointidlist.push_back( DualPointFromPrimalTriangleLUT[ leftTriangle ] );
@@ -167,20 +186,363 @@ int main( int argc, char ** argv )
     }
 
   BoundaryLocatorType::Pointer boundaryEdges = BoundaryLocatorType::New();
+  MeshType::EdgeListPointerType boundaryEdgesPointerList = boundaryEdges->Evaluate( *myPrimalMesh );
+  std::cout << "\n size : " << boundaryEdgesPointerList->size();
 
-  MeshType::EdgeListPointerType boundaryEdgesPointerList;
-  boundaryEdgesPointerList = boundaryEdges->Evaluate( *myMesh );
+  // for each boundary
+  for(int i=0; i<boundaryEdgesPointerList->size(); i++)
+    {
+
+	// get the first edge (arbitrary) and remove it from the list
+	QuadEdgeType* firstEdge = boundaryEdgesPointerList->front();
+    QuadEdgeType* currentEdge = firstEdge;
+	boundaryEdgesPointerList->pop_front();
+
+    // circulate around the boundary and do what you have to do
+	int j=0;
+	bool firstTime = true;
+	PointIdentifier previousPointId;
+    do
+      {
+	    // HOMEWORK 1
+
+	  // create a new point in the middle of the edge
+      PointIdentifier originPointId = currentEdge->GetOrigin();
+	  PointIdentifier destinationPointId = currentEdge->GetDestination();
+
+      PointType originPoint = myPrimalMesh->GetPoint(originPointId );
+      PointType destinationPoint = myPrimalMesh->GetPoint(destinationPointId );
+	  PointType currentPoint;
+	  for( unsigned int k =0; k<3; k++ ) currentPoint[k] = (originPoint[k] + destinationPoint[k]) / 2 ;
+
+      // add the new border point P1 to the dual point container
+	  PointIdentifier currentPointId = myDualMesh->GetNumberOfPoints();
+	  myDualMesh->SetPoint( currentPointId, currentPoint );
+	  //PointIdentifier currentPointId = myDualMesh->AddPoint(midPoint);
+
+      // find the dual point P2 associated with the face on the left
+      QuadEdgeType::DualOriginRefType leftTriangle = currentEdge->GetLeft();
+
+      // add the dual edge P1-P2
+  	  PointIdentifier leftDualPointId =  DualPointFromPrimalTriangleLUT[ leftTriangle ];
+	  myDualMesh->AddEdge(currentPointId, leftDualPointId);
+
+	  currentEdge = currentEdge->GetLnext();
+
+	  std::cout << "\n" << ++j <<"\tOrigin:             " << originPointId  << "\t" << originPoint <<std::endl;
+	  std::cout << "\n" << j <<"\tDestination:          " << destinationPointId << "\t" <<destinationPoint << std::endl;
+	  std::cout << "\n" << j <<"\tMid Point (P1) :      " << currentPointId << "\t" << currentPoint << std::endl;
+	  std::cout << "\n" << j <<"\tLeft Dual Point (P2): " << leftDualPointId << std::endl;
+
+	  // HOMEWORK 2
+	    // beware border cases
+	    // add the edge linking two new border dual points
+	    // either previous-current, or current-next
+	    // be carefull of first, respectingly last case
+      if(firstTime == false)
+			myDualMesh->AddEdge(previousPointId, currentPointId);
+	  else
+		  firstTime = false;
+	  previousPointId = currentPointId;
+
+        // HOMEWORK 3
+	    // beware same border case
+	    // create and add cell to dual cell container
+
+	  if(firstTime == false)
+	    {
+	    // grab the QEdge
+	    QuadEdgeType * start = currentPoint.GetEdge();
+	    QuadEdgeType * current = currentPoint.GetEdge();
+
+		// create a point ID list to hold the dual point IDs while iterating to create the dual cell
+        PointIdList pointidlist;
+
+        // iterate around the o-ring
+        do
+          {
+
+          // push the dual point ID to the point ID list
+		  // run time here... (May be bug)
+		  pointidlist.push_back( current->GetOrigin() );
+
+          current = current->GetOnext();
+
+          } while( current != start );
+
+        // point list is complete, add the dual cell to the dual mesh;
+        myDualMesh->AddFace( pointidlist );
+	    // HELP
+		// myPrimalMesh->AddEdge(previousPoint,currentPoint);
+	    // myPrimalMesh->AddFace( QEType* );
+	    }
+	  } while (currentEdge != firstEdge);
+    }
 
   typedef itk::VTKPolyDataWriter<MeshType>   WriterType;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( myMesh );
-  writer->SetFileName( "MyVeryFirstTriangularMesh.vtk" );
+  writer->SetInput( myPrimalMesh );
+  writer->SetFileName( "E:\\SquareTriangularMesh.vtk" );
   writer->Write();
 
   writer->SetInput( myDualMesh );
-  writer->SetFileName( "MyVeryFirstSimplexMesh.vtk" );
+  writer->SetFileName( "E:\\SquareTriangularSimplexMesh2.vtk" );
   writer->Write();
-  // getch();
+
+  getch();
   return EXIT_SUCCESS;
 
+}
+
+template< class TMesh >
+std::vector< typename TMesh::PointType >
+GeneratePointCoordinates( const unsigned int& iN )
+{
+  typedef typename TMesh::PointType        PointType;
+  typedef typename PointType::CoordRepType CoordRepType;
+  std::vector< PointType > oPt( iN * iN );
+
+  for( unsigned int i = 0; i < iN; i++ )
+  {
+    for( unsigned int j = 0; j < iN; j++ )
+    {
+      oPt[ i * iN + j ][0] = static_cast< CoordRepType >( j );
+      oPt[ i * iN + j ][1] = static_cast< CoordRepType >( i );
+      oPt[ i * iN + j ][2] = static_cast< CoordRepType >( 0. );
+    }
+  }
+
+  return oPt;
+}
+
+template< class TMesh >
+void CreateSquareQuadMesh( typename TMesh::Pointer mesh )
+{
+  typedef TMesh                         MeshType;
+  typedef typename MeshType::CellType   CellType;
+
+  typedef itk::QuadEdgeMeshPolygonCell< CellType > QEPolygonCellType;
+
+  if( mesh->GetNumberOfPoints( ) )
+    {
+    mesh->Clear( );
+    mesh->ClearFreePointAndCellIndexesLists();
+    }
+
+  /////////////////////////////////////////////////////////////
+  int expectedNumPts = 25;
+  int expectedNumCells = 16;
+  int simpleSquareCells[64] =
+  {  0,  1,  6, 5,
+     1,  2,  7, 6,
+     2,  3,  8, 7,
+     3,  4,  9, 8,
+     5,  6, 11, 10,
+     6,  7, 12, 11,
+     7,  8, 13, 12,
+     8,  9, 14, 13,
+    10, 11, 16, 15,
+    11, 12, 17, 16,
+    12, 13, 18, 17,
+    13, 14, 19, 18,
+    15, 16, 21, 20,
+    16, 17, 22, 21,
+    17, 18, 23, 22,
+    18, 19, 24, 23 };
+
+  typedef typename MeshType::PointType PointType;
+
+  std::vector< PointType > pts = GeneratePointCoordinates< MeshType >( 5 );
+
+  for(int i=0; i<expectedNumPts; i++)
+    {
+    mesh->SetPoint( i, pts[i] );
+    }
+
+  typename CellType::CellAutoPointer cellpointer;
+  QEPolygonCellType *poly;
+
+  for(int i=0; i<expectedNumCells; i++)
+    {
+    poly = new QEPolygonCellType( 4 );
+    cellpointer.TakeOwnership( poly );
+    cellpointer->SetPointId( 0, simpleSquareCells[4*i] );
+    cellpointer->SetPointId( 1, simpleSquareCells[4*i+1] );
+    cellpointer->SetPointId( 2, simpleSquareCells[4*i+2] );
+    cellpointer->SetPointId( 3, simpleSquareCells[4*i+3] );
+    mesh->SetCell( i, cellpointer );
+    }
+}
+
+template< class TMesh >
+void CreateSquareTriangularMesh( typename TMesh::Pointer mesh )
+{
+  typedef TMesh                         MeshType;
+  typedef typename MeshType::CellType   CellType;
+
+  typedef itk::QuadEdgeMeshPolygonCell< CellType > QEPolygonCellType;
+
+  if( mesh->GetNumberOfPoints( ) )
+    {
+    mesh->Clear( );
+    mesh->ClearFreePointAndCellIndexesLists();
+    }
+
+  /////////////////////////////////////////////////////////////
+  int expectedNumPts = 25;
+  int expectedNumCells = 32;
+  int simpleSquareCells[96] =
+  {  0,  1,  6,
+     0,  6,  5,
+     1,  2,  7,
+     1,  7,  6,
+     2,  3,  8,
+     2,  8,  7,
+     3,  4,  9,
+     3,  9,  8,
+     5,  6, 11,
+     5, 11, 10,
+     6,  7, 12,
+     6, 12, 11,
+     7,  8, 13,
+     7, 13, 12,
+     8,  9, 14,
+     8, 14, 13,
+    10, 11, 16,
+    10, 16, 15,
+    11, 12, 17,
+    11, 17, 16,
+    12, 13, 18,
+    12, 18, 17,
+    13, 14, 19,
+    13, 19, 18,
+    15, 16, 21,
+    15, 21, 20,
+    16, 17, 22,
+    16, 22, 21,
+    17, 18, 23,
+    17, 23, 22,
+    18, 19, 24,
+    18, 24, 23 };
+
+  typedef typename TMesh::PointType PointType;
+  std::vector< PointType > pts = GeneratePointCoordinates< TMesh >( 5 );
+
+  for(int i=0; i<expectedNumPts; i++)
+    {
+    mesh->SetPoint( i, pts[i] );
+    }
+
+  typename CellType::CellAutoPointer cellpointer;
+  QEPolygonCellType *poly;
+
+  for(int i=0; i<expectedNumCells; i++)
+    {
+    poly = new QEPolygonCellType( 3 );
+    cellpointer.TakeOwnership( poly );
+    cellpointer->SetPointId( 0, simpleSquareCells[3*i] );
+    cellpointer->SetPointId( 1, simpleSquareCells[3*i+1] );
+    cellpointer->SetPointId( 2, simpleSquareCells[3*i+2] );
+    mesh->SetCell( i, cellpointer );
+    }
+}
+
+//----------------------------------------------------------------------------
+template< class TMesh >
+void CreateTetraedronMesh( typename TMesh::Pointer mesh )
+{
+  typedef TMesh                         MeshType;
+  typedef typename MeshType::CellType   CellType;
+
+  typedef itk::QuadEdgeMeshPolygonCell< CellType > QEPolygonCellType;
+
+  if( mesh->GetNumberOfPoints( ) )
+    {
+    mesh->Clear( );
+    mesh->ClearFreePointAndCellIndexesLists();
+    }
+
+  /////////////////////////////////////////////////////////////
+  int expectedNumPts = 4;
+  int expectedNumCells = 4;
+  int simpleSquareCells[12] =
+  {  0,  1,  2,
+     1,  0,  3,
+     1,  3,  2,
+     2,  3,  0 };
+
+  typedef typename TMesh::PointType PointType;
+  std::vector< PointType > pts( 4 );
+  int i(0);
+  pts[i][0] = 0.; pts[i][1] = 1.; pts[i++][2] = 0.;
+  pts[i][0] = 0.; pts[i][1] = -1.; pts[i++][2] = 0.;
+  pts[i][0] = -1.; pts[i][1] = 0.; pts[i++][2] = 0.;
+  pts[i][0] = 0.; pts[i][1] = 0.; pts[i++][2] = 1.;
+
+  for( i=0; i<expectedNumPts; i++)
+    {
+    mesh->SetPoint( i, pts[i] );
+    }
+
+  typename CellType::CellAutoPointer cellpointer;
+  QEPolygonCellType *poly;
+
+  for( i=0; i<expectedNumCells; i++)
+    {
+    poly = new QEPolygonCellType( 3 );
+    cellpointer.TakeOwnership( poly );
+    cellpointer->SetPointId( 0, simpleSquareCells[3*i] );
+    cellpointer->SetPointId( 1, simpleSquareCells[3*i+1] );
+    cellpointer->SetPointId( 2, simpleSquareCells[3*i+2] );
+    mesh->SetCell( i, cellpointer );
+    }
+}
+
+
+//----------------------------------------------------------------------------
+template< class TMesh >
+void CreateSamosa( typename TMesh::Pointer mesh )
+{
+  typedef TMesh                         MeshType;
+  typedef typename MeshType::CellType   CellType;
+
+  typedef itk::QuadEdgeMeshPolygonCell< CellType > QEPolygonCellType;
+
+  if( mesh->GetNumberOfPoints( ) )
+    {
+    mesh->Clear( );
+    mesh->ClearFreePointAndCellIndexesLists();
+    }
+
+  /////////////////////////////////////////////////////////////
+  int expectedNumPts = 3;
+  int expectedNumCells = 2;
+  int simpleSquareCells[6] =
+  {  0,  1,  2,
+     1,  0,  2 };
+
+  typedef typename TMesh::PointType PointType;
+  std::vector< PointType > pts( 3 );
+  int i(0);
+  pts[i][0] = 0.; pts[i][1] = 1.; pts[i++][2] = 0.;
+  pts[i][0] = 0.; pts[i][1] = -1.; pts[i++][2] = 0.;
+  pts[i][0] = -1.; pts[i][1] = 0.; pts[i++][2] = 0.;
+
+  for( i=0; i<expectedNumPts; i++)
+    {
+    mesh->SetPoint( i, pts[i] );
+    }
+
+  typename CellType::CellAutoPointer cellpointer;
+  QEPolygonCellType *poly;
+
+  for( i=0; i<expectedNumCells; i++)
+    {
+    poly = new QEPolygonCellType( 3 );
+    cellpointer.TakeOwnership( poly );
+    cellpointer->SetPointId( 0, simpleSquareCells[3*i] );
+    cellpointer->SetPointId( 1, simpleSquareCells[3*i+1] );
+    cellpointer->SetPointId( 2, simpleSquareCells[3*i+2] );
+    mesh->SetCell( i, cellpointer );
+    }
 }

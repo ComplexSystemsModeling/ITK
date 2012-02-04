@@ -908,6 +908,7 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
   // now delete the edge in the edge container
   CellType *edgeCellToDelete = this->GetEdgeCells()->ElementAt( e->GetIdent() );
   this->GetEdgeCells()->DeleteIndex( e->GetIdent() );
+  e->Disconnect();
   delete edgeCellToDelete;
   --m_NumberOfEdges;
 

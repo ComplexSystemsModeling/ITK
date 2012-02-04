@@ -7,7 +7,6 @@
 #include "itkQuadEdgeMeshTopologyChecker.h"
 #include "itkQuadEdgeMeshPolygonCell.h"
 
-#include <conio.h>
 #include <iostream>
 
 typedef itk::QuadEdgeMesh< float, 3>   MeshType;
@@ -78,7 +77,7 @@ int main( int argc, char ** argv )
   //myPrimalMesh = MySphereMeshSource->GetOutput();
   CreateSquareTriangularMesh <MeshType> (myPrimalMesh);
 
-  myPrimalMesh->DeleteEdge( 11, 12 );
+   myPrimalMesh->LightWeightDeleteEdge( myPrimalMesh->FindEdge( 11, 12 ) );
 
   // take care of the primal cells => generate dual points
   const CellsContainer *primalCells = myPrimalMesh->GetCells();
@@ -189,7 +188,7 @@ int main( int argc, char ** argv )
   MeshType::EdgeListPointerType boundaryEdgesPointerList = boundaryEdges->Evaluate( *myPrimalMesh );
 
   // for each boundary
-  for(int i=0; i<boundaryEdgesPointerList->size(); i++)
+  for( unsigned int i = 0; i < boundaryEdgesPointerList->size(); i++ )
     {
     // get the first edge (arbitrary) and remove it from the list
     QuadEdgeType* firstEdge = boundaryEdgesPointerList->front();
@@ -293,7 +292,6 @@ do
   writer->SetFileName( "E:\\TestSquareTriangularSimplexMesh.vtk" );
   writer->Write();
 
-  getch();
   return EXIT_SUCCESS;
 
 }

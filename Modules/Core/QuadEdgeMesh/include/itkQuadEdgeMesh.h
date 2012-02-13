@@ -491,7 +491,11 @@ public:
 
   CellIdentifier GetNumberOfFaces() const { return ( m_NumberOfFaces ); }
   CellIdentifier GetNumberOfEdges() const { return ( m_NumberOfEdges ); }
+
 protected:
+  FreePointIndexesType m_FreePointIndexes;
+  FreeCellIndexesType  m_FreeCellIndexes;
+
   /** Constructor and Destructor. */
   QuadEdgeMesh();
   virtual ~QuadEdgeMesh();
@@ -500,15 +504,13 @@ protected:
   virtual void ClearCellsContainer();
 
   CellsContainerPointer m_EdgeCellsContainer;
+
 private:
   QuadEdgeMesh(const Self &);     //purposely not implemented
   void operator=(const Self &);   //purposely not implemented
 
   CellIdentifier m_NumberOfFaces;
   CellIdentifier m_NumberOfEdges;
-protected:
-  FreePointIndexesType m_FreePointIndexes;
-  FreeCellIndexesType  m_FreeCellIndexes;
 };
 }
 

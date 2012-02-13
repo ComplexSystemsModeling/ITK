@@ -1,10 +1,9 @@
 #include "itkQuadEdgeMesh.h"
-#include "itkQuadEdgeMeshPoint.h"
-#include "itkRegularSphereMeshSource.h"
+#include "itkQuadEdgeMeshWithDual.h"
+#include "itkQuadEdgeMeshWithDualAdaptor.h"
 #include "itkDefaultStaticMeshTraits.h"
 #include "itkVTKPolyDataWriter.h"
 #include "itkQuadEdgeMeshBoundaryEdgesMeshFunction.h"
-#include "itkQuadEdgeMeshTopologyChecker.h"
 #include "itkQuadEdgeMeshPolygonCell.h"
 #include "itkQuadEdgeMeshEulerOperatorsTestHelper.h"
 
@@ -12,34 +11,54 @@
 
 int main( int argc, char ** argv )
 {
+  //-----------------------------------------
+  //  Define all the types we will work with
+  //-----------------------------------------
+
   const unsigned int dimension = 3;
-  typedef itk::QuadEdgeMesh< float, 3>   MeshType;
-  typedef MeshType::PointIdentifier      PointIdentifier;
-  typedef MeshType::CellIdentifier       CellIdentifier;
-  typedef MeshType::PointsContainer      PointsContainer;
-  typedef MeshType::CellsContainer       CellsContainer;
-  typedef MeshType::CellType             CellType;
-  typedef MeshType::PointType            PointType;
-  typedef MeshType::PointIdList          PointIdList;
-  typedef MeshType::QEType               QuadEdgeType;
+
+  typedef itk::QuadEdgeMeshWithDual< float, dimension > SimplexMeshType;
+
+  typedef SimplexMeshType::PointIdentifier PointIdentifier;
+  typedef SimplexMeshType::CellIdentifier  CellIdentifier;
+  typedef SimplexMeshType::PointsContainer PointsContainer;
+  typedef SimplexMeshType::CellsContainer  CellsContainer;
+  typedef SimplexMeshType::CellType        CellType;
+  typedef SimplexMeshType::PointType       PointType;
+  typedef SimplexMeshType::PointIdList     PointIdList;
+  typedef SimplexMeshType::QEType          QuadEdgeType;
 
   typedef CellType::PointIdConstIterator PointIdConstIterator;
 
   typedef PointsContainer::ConstIterator PointIterator;
   typedef CellsContainer::ConstIterator  CellIterator;
 
-  typedef itk::QuadEdgeMeshBoundaryEdgesMeshFunction< MeshType > BoundaryLocatorType;
+  // this will be use to find and track boundaries
+  typedef itk::QuadEdgeMeshBoundaryEdgesMeshFunction< SimplexMeshType > BoundaryLocatorType;
 
+  //--------------------------------------------------------------
+  // Create the DataStructures that will hold the data in memory
+  //--------------------------------------------------------------
+
+  // LUT that will need to be integrated in the DataStructure
   std::map< CellIdentifier ,PointIdentifier >   DualPointFromPrimalTriangleLUT;
 
-  MeshType::Pointer myDualMesh = MeshType::New();
-  MeshType::Pointer myPrimalMesh = MeshType::New();
+  // main DataStructure
+  SimplexMeshType::Pointer myPrimalMesh = SimplexMeshType::New();
+
+  //-----------------------------------------
+  // Create an input mesh to toy around with
+  //-----------------------------------------
 
   std::cout << "Create a square triangulated planar mesh." << std::endl;
-  CreateSquareTriangularMesh< MeshType >( myPrimalMesh );
+  CreateSquareTriangularMesh< SimplexMeshType >( myPrimalMesh );
 
   std::cout << "Poke a hole in the mesh to have two boundaries." << std::endl;
   myPrimalMesh->LightWeightDeleteEdge( myPrimalMesh->FindEdge( 11, 12 ) );
+
+  //-------------------------------------------------------
+  // First pass: dual points for 2D cells (triangles here)
+  //-------------------------------------------------------
 
   std::cout << "Generation of dual points: barycenter of primal cells" << std::endl;
 
@@ -89,7 +108,7 @@ int main( int argc, char ** argv )
               d_point[i] /= dimension;
               }
             // push dual point in dualPoints container
-            myDualMesh->SetPoint( numberOfDualPoints, d_point );
+            myPrimalMesh->SetDualPoint( numberOfDualPoints, d_point );
             CellIdentifier cellIdentifier = cellIterator.Index();
             DualPointFromPrimalTriangleLUT[cellIdentifier] = numberOfDualPoints;
             numberOfDualPoints++;
@@ -105,10 +124,13 @@ int main( int argc, char ** argv )
       }
     }
 
+  //-------------------------------------------------------
+  // Second pass: dual cells (polygons) for primal points
+  //-------------------------------------------------------
+
   std::cout << "Generate Dual Cells from the primal points" << std::endl;
 
   const PointsContainer *primalPoints = myPrimalMesh->GetPoints();
-  const PointsContainer *dualPoints   = myDualMesh->GetPoints();
   if( primalPoints )
     {
     PointIterator pointIterator = primalPoints->Begin();
@@ -141,15 +163,19 @@ int main( int argc, char ** argv )
           } while( current != start );
 
         // point list is complete, add the dual cell to the dual mesh;
-        myDualMesh->AddFace( pointidlist );
+        myPrimalMesh->AddDualFace( pointidlist );
         }
       // next point
       pointIterator++;
       }
     }
 
+  //-----------------------------------------
+  // last pass: Treat the borders as 1D cells
+  //-----------------------------------------
+
   BoundaryLocatorType::Pointer boundaryEdges = BoundaryLocatorType::New();
-  MeshType::EdgeListPointerType boundaryEdgesPointerList = boundaryEdges->Evaluate( *myPrimalMesh );
+  SimplexMeshType::EdgeListPointerType boundaryEdgesPointerList = boundaryEdges->Evaluate( *myPrimalMesh );
 
   // for each boundary
   unsigned int i = 0;
@@ -168,10 +194,9 @@ int main( int argc, char ** argv )
     bool firstTime = true;
     PointIdentifier previousPointId;
     PointIdentifier currentPointId;
-    PointIdentifier firstPointId = myDualMesh->GetNumberOfPoints();
+    PointIdentifier firstPointId = myPrimalMesh->GetNumberOfDualPoints();
     do
       {
-      // HOMEWORK 1
       // create a new point in the middle of the edge
       // this is a dual point. Cells are sample in 2d, boundaries are sample in 1D
       PointIdentifier originPointId = currentEdge->GetOrigin();
@@ -186,30 +211,22 @@ int main( int argc, char ** argv )
         }
 
       // add the new border point P1 to the dual point container
-      currentPointId = myDualMesh->AddPoint(currentPoint);
+      currentPointId = myPrimalMesh->AddDualPoint( currentPoint );
 
       // find the dual point P2 associated with the face on the left
       QuadEdgeType::DualOriginRefType leftTriangle = currentEdge->GetRight();
 
       // add the dual edge P1-P2
       PointIdentifier leftDualPointId = DualPointFromPrimalTriangleLUT[ leftTriangle ];
-      myDualMesh->AddEdge( currentPointId, leftDualPointId );
+      myPrimalMesh->AddDualEdge( currentPointId, leftDualPointId );
 
-      // HOMEWORK 2
-
-      // beware border cases
       // add the edge linking two new border dual points
       // either previous-current, or current-next
-      // be carefull of first, respectingly last case
       if( firstTime == true )
         firstTime = false;
       else
         {
-        // HOMEWORK 3
-
-        myDualMesh->AddEdge( previousPointId, currentPointId );
-
-        // grab the QEdge
+        myPrimalMesh->AddDualEdge( previousPointId, currentPointId );
 
         // create a point ID list to hold the dual point IDs while iterating to create the dual cell
         PointIdList pointidlist;
@@ -227,7 +244,7 @@ int main( int argc, char ** argv )
         pointidlist.push_back( currentPointId );
 
         // point list is complete, add the dual cell to the dual mesh;
-        myDualMesh->AddFace( pointidlist );
+        myPrimalMesh->AddDualFace( pointidlist );
         }
       previousPointId = currentPointId;
 
@@ -251,18 +268,28 @@ int main( int argc, char ** argv )
     pointidlist.push_back( firstPointId );
 
     // point list is complete, add the dual cell to the dual mesh;
-    myDualMesh->AddFace( pointidlist );
+    myPrimalMesh->AddDualFace( pointidlist );
     }
 
-  typedef itk::VTKPolyDataWriter<MeshType>   WriterType;
-  WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( myPrimalMesh );
-  writer->SetFileName( "TestSquareTriangularMesh.vtk" );
-  writer->Write();
+  //-----------------------------------------------------
+  // Write the original mesh, and the computed dual mesh
+  //-----------------------------------------------------
 
-  writer->SetInput( myDualMesh );
-  writer->SetFileName( "TestSquareTriangularSimplexMesh.vtk" );
-  writer->Write();
+  typedef itk::VTKPolyDataWriter<SimplexMeshType> MeshWriterType;
+  MeshWriterType::Pointer writer1 = MeshWriterType::New();
+  writer1->SetInput( myPrimalMesh );
+  writer1->SetFileName( "TestSquareTriangularMesh.vtk" );
+  writer1->Write();
+
+  typedef itk::QuadEdgeMeshWithDualAdaptor< SimplexMeshType >  AdaptorType;
+  AdaptorType* adaptor = new AdaptorType();
+  adaptor->SetInput( myPrimalMesh );
+
+  typedef itk::VTKPolyDataWriter< AdaptorType > DualMeshWriterType;
+  DualMeshWriterType::Pointer writer2 = DualMeshWriterType::New();
+  writer2->SetInput( adaptor );
+  writer2->SetFileName( "TestSquareTriangularSimplexMesh.vtk" );
+  writer2->Write();
 
   return EXIT_SUCCESS;
 }

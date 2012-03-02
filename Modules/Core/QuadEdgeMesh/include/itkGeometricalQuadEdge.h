@@ -80,9 +80,10 @@ public:
   typedef TFRef       DualOriginRefType;
   typedef TPrimalData PrimalDataType;
   typedef TDualData   DualDataType;
+
   // Line Cell Id in Mesh Cell Container
   // used to go up to LineCell level
-  typedef TFRef LineCellIdentifier;
+  typedef typename TFRef::first_type   LineCellIdentifier;
 public:
 
   /** Iterator types. */
@@ -134,7 +135,7 @@ public:
   bool SetLnextRingWithSameLeftFace(const DualOriginRefType faceGeom,
                                     int maxSize = 100);
 
-  inline void UnsetOrigin()   { m_Origin = m_NoPoint; }
+  inline void UnsetOrigin()   { m_Origin.first = m_NoPoint; m_Origin.second = m_NoPoint; }
   inline void UnsetDestination()  { this->GetSym()->UnsetOrigin(); }
   inline void UnsetRight() { this->GetRot()->UnsetOrigin(); }
   inline void UnsetLeft()  { this->GetInvRot()->UnsetOrigin(); }
@@ -237,7 +238,7 @@ public:
   inline LineCellIdentifier GetIdent() { return ( this->m_LineCellIdent ); }
 public:
   // Reserved OriginRefType designated to represent the absence of Origin
-  static const OriginRefType m_NoPoint;
+  static const  LineCellIdentifier m_NoPoint;
 protected:
   OriginRefType      m_Origin;    // Geometrical information
   PrimalDataType     m_Data;      // User data associated to this edge.

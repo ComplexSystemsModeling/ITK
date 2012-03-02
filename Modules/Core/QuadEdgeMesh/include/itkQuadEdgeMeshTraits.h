@@ -19,6 +19,8 @@
 #define __itkQuadEdgeMeshTraits_h
 
 #include <set>
+#include <utility>
+
 #include "itkCellInterface.h"
 #include "itkQuadEdgeCellTraitsInfo.h"
 
@@ -67,12 +69,11 @@ public:
   /** Quad edge typedefs. */
   typedef TPData PrimalDataType;
   typedef TDData DualDataType;
-  typedef GeometricalQuadEdge< PointIdentifier, CellIdentifier,
-                               PrimalDataType, DualDataType > QEPrimal;
-  //typedef QEPrimal QEType;
-  typedef typename QEPrimal::DualType QEDual;
-  // FOR LEO typedef typename QEPrimal::Superclass     QEType;
-  // FOR LEO typedef typename QEPrimal::Dual           QEDual;
+  typedef GeometricalQuadEdge<
+    std::pair< PointIdentifier, CellIdentifier  >,
+    std::pair< CellIdentifier,  PointIdentifier >,
+    PrimalDataType, DualDataType >             QEPrimal;
+  typedef typename QEPrimal::DualType          QEDual;
   typedef typename QEPrimal::OriginRefType     VertexRefType;
   typedef typename QEPrimal::DualOriginRefType FaceRefType;
 

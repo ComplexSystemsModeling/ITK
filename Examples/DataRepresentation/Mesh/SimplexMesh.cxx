@@ -156,7 +156,7 @@ int main( int argc, char ** argv )
           QuadEdgeType::DualOriginRefType leftTriangle = current->GetLeft();
 
           // push the dual point ID to the point ID list
-          pointidlist.push_back( DualPointFromPrimalTriangleLUT[ leftTriangle ] );
+          pointidlist.push_back( DualPointFromPrimalTriangleLUT[ leftTriangle.first ] );
 
           current = current->GetOnext();
 
@@ -199,8 +199,8 @@ int main( int argc, char ** argv )
       {
       // create a new point in the middle of the edge
       // this is a dual point. Cells are sample in 2d, boundaries are sample in 1D
-      PointIdentifier originPointId = currentEdge->GetOrigin();
-      PointIdentifier destinationPointId = currentEdge->GetDestination();
+      PointIdentifier originPointId = currentEdge->GetOrigin().first;
+      PointIdentifier destinationPointId = currentEdge->GetDestination().first;
 
       PointType originPoint = myPrimalMesh->GetPoint( originPointId );
       PointType destinationPoint = myPrimalMesh->GetPoint( destinationPointId );
@@ -217,7 +217,7 @@ int main( int argc, char ** argv )
       QuadEdgeType::DualOriginRefType leftTriangle = currentEdge->GetRight();
 
       // add the dual edge P1-P2
-      PointIdentifier leftDualPointId = DualPointFromPrimalTriangleLUT[ leftTriangle ];
+      PointIdentifier leftDualPointId = DualPointFromPrimalTriangleLUT[ leftTriangle.first ];
       myPrimalMesh->AddDualEdge( currentPointId, leftDualPointId );
 
       // add the edge linking two new border dual points
@@ -235,7 +235,7 @@ int main( int argc, char ** argv )
         do
           {
           QuadEdgeType::DualOriginRefType myleftTriangle = myEdge->GetLeft();
-          PointIdentifier myleftDualPointId =  DualPointFromPrimalTriangleLUT[ myleftTriangle ];
+          PointIdentifier myleftDualPointId =  DualPointFromPrimalTriangleLUT[ myleftTriangle.first ];
           pointidlist.push_back( myleftDualPointId );
           myEdge = myEdge->GetOnext();
           }
@@ -259,7 +259,7 @@ int main( int argc, char ** argv )
     do
       {
       QuadEdgeType::DualOriginRefType myleftTriangle = myEdge->GetLeft();
-      PointIdentifier myleftDualPointId =  DualPointFromPrimalTriangleLUT[ myleftTriangle ];
+      PointIdentifier myleftDualPointId =  DualPointFromPrimalTriangleLUT[ myleftTriangle.first ];
       pointidlist.push_back( myleftDualPointId );
       myEdge = myEdge->GetOnext();
       }

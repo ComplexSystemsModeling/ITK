@@ -126,8 +126,8 @@ public:
   virtual void MakeCopy(CellAutoPointer & cell) const
   {
     cell.TakeOwnership(new Self);
-    cell->SetPointId( 0, this->GetQEGeom()->GetOrigin() );
-    cell->SetPointId( 1, this->GetQEGeom()->GetDestination() );
+    cell->SetPointId( 0, this->GetQEGeom()->GetOrigin().first );
+    cell->SetPointId( 1, this->GetQEGeom()->GetDestination().second );
   }
 
   /** ITK Cell API - Iterator-related methods.
@@ -174,8 +174,8 @@ public:
   /** helper for backward compatibility */
   void SynchronizePointsAPI() const
   {
-    m_PointIds[0] = GetQEGeom()->GetOrigin();
-    m_PointIds[1] = GetQEGeom()->GetDestination();
+    m_PointIds[0] = GetQEGeom()->GetOrigin().first;
+    m_PointIds[1] = GetQEGeom()->GetDestination().first;
   }
 
   /** QuadEdge internal flavor of cell API */

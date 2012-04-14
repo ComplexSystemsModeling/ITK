@@ -6,7 +6,7 @@
 namespace itk
 {
 /**
- * \class QuadEdgeMesWithDualh
+ * \class QuadEdgeMeshWithDual
  *
  * \brief Mesh class for 2D manifolds embedded in ND space and their dual.
  *

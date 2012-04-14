@@ -41,38 +41,38 @@ public:
   itkNewMacro(Self);
   itkTypeMacro(QuadEdgeMeshWithDual, QuadEdgeMesh);
 
-  itkSuperclassTraitMacro( CellPixelType              );
-  itkSuperclassTraitMacro( CoordRepType               );
-  itkSuperclassTraitMacro( PointHashType              );
-  itkSuperclassTraitMacro( CellTraits                 );
-  itkSuperclassTraitMacro( PointIdInternalIterator    );
-  itkSuperclassTraitMacro( PointIdIterator            );
+  typedef typename Superclass::CellPixelType           CellPixelType;
+  typedef typename Superclass::CoordRepType            CoordRepType;
+  typedef typename Superclass::PointHashType           PointHashType;
+  typedef typename Superclass::CellTraits              CellTraits;
+  typedef typename Superclass::PointIdInternalIterator PointIdInternalIterator;
+  typedef typename Superclass::PointIdIterator         PointIdIterator;
 
-  itkSuperclassTraitMacro( PointIdentifier );
-  itkSuperclassTraitMacro( PointType       );
-  itkSuperclassTraitMacro( PointIdList     );
-  itkSuperclassTraitMacro( PointsContainer );
-  itkSuperclassTraitMacro( PointsContainerPointer       );
-  itkSuperclassTraitMacro( PointsContainerConstIterator );
-  itkSuperclassTraitMacro( PointsContainerIterator      );
-  itkSuperclassTraitMacro( PointDataContainer           );
-  itkSuperclassTraitMacro( PointDataContainerPointer    );
-  itkSuperclassTraitMacro( PointDataContainerIterator   );
+  typedef typename Superclass::PointIdentifier               PointIdentifier;
+  typedef typename Superclass::PointType                     PointType    ;
+  typedef typename Superclass::PointIdList                   PointIdList;
+  typedef typename Superclass::PointsContainer               PointsContainer;
+  typedef typename Superclass::PointsContainerPointer        PointsContainerPointer;
+  typedef typename Superclass::PointsContainerConstIterator  PointsContainerConstIterator;
+  typedef typename Superclass::PointsContainerIterator       PointsContainerIterator;
+  typedef typename Superclass::PointDataContainer            PointDataContainer;
+  typedef typename Superclass::PointDataContainerPointer     PointDataContainerPointer;
+  typedef typename Superclass::PointDataContainerIterator    PointDataContainerIterator;
 
-  itkSuperclassTraitMacro( CellIdentifier  );
-  itkSuperclassTraitMacro( CellType        );
-  itkSuperclassTraitMacro( CellAutoPointer );
-  itkSuperclassTraitMacro( CellMultiVisitorType  );
-  itkSuperclassTraitMacro( CellsContainer        );
-  itkSuperclassTraitMacro( CellsContainerPointer );
-  itkSuperclassTraitMacro( CellsContainerConstIterator );
-  itkSuperclassTraitMacro( CellsContainerIterator      );
-  itkSuperclassTraitMacro( CellDataContainer           );
-  itkSuperclassTraitMacro( CellDataContainerPointer    );
-  itkSuperclassTraitMacro( CellDataContainerIterator   );
+  typedef typename Superclass::CellIdentifier CellIdentifier;
+  typedef typename Superclass::CellType      CellType;
+  typedef typename Superclass::CellAutoPointer CellAutoPointer;
+  typedef typename Superclass::CellMultiVisitorType CellMultiVisitorType;
+  typedef typename Superclass::CellsContainer      CellsContainer;
+  typedef typename Superclass::CellsContainerPointer CellsContainerPointer;
+  typedef typename Superclass::CellsContainerConstIterator CellsConatinerConstIterator;
+  typedef typename Superclass::CellsContainerIterator     CellsContainerIterator;
+  typedef typename Superclass::CellDataContainer          CellDataContainer;
+  typedef typename Superclass::CellDataContainerPointer   CellDataContainerPointer;
+  typedef typename Superclass::CellDataContainerIterator  CellDataContainerIterator;
 
-  itkSuperclassTraitMacro( PolygonCellType );
-  itkSuperclassTraitMacro( EdgeCellType    );
+  typedef typename Superclass::PolygonCellType PolygonCellType;
+  typedef typename Superclass::EdgeCellType    EdgeCellType;
 
   /** Accessors */
   const CellsContainerPointer  GetDualCells()     const { return m_DualCellsContainer;     };

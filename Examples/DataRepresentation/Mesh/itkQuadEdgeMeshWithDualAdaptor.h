@@ -22,16 +22,16 @@ public:
                       Superclass::MaxTopologicalDimension);
 
   /** those types need to be defined for the itkVTKPolydataWriter */
-  itkSuperclassTraitMacro( PixelType );
-  itkSuperclassTraitMacro( PointType );
-  itkSuperclassTraitMacro( CellType  );
-  itkSuperclassTraitMacro( PointIdentifier );
-  itkSuperclassTraitMacro( PointIdIterator );
-  itkSuperclassTraitMacro( CellTraits      );
-  itkSuperclassTraitMacro( PointsContainer );
-  itkSuperclassTraitMacro( CellsContainer  );
-  itkSuperclassTraitMacro( PointsContainerPointer );
-  itkSuperclassTraitMacro( CellsContainerPointer  );
+  typedef typename Superclass::PixelType               PixelType;
+  typedef typename Superclass::PointType               PointType;
+  typedef typename Superclass::CellType                CellType;
+  typedef typename Superclass::PointIdentifier         PointIdentifier;
+  typedef typename Superclass::PointIdIterator         PointIdIterator;
+  typedef typename Superclass::CellTraits              CellTraits;
+  typedef typename Superclass::PointsContainer         PointsContainer;
+  typedef typename Superclass::CellsContainer          CellsContainer;
+  typedef typename Superclass::PointsContainerPointer  PointsContainerPointer;
+  typedef typename Superclass::CellsContainerPointer   CellsContainerPointer;
 
   /** API that will be used by itkVTKPolydataWriter */
   const PointIdentifier  GetNumberOfPoints() const { return GetPoints()->size(); };

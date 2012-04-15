@@ -17,20 +17,28 @@
  *=========================================================================*/
 #ifndef __itkGeometricalQuadEdge_hxx
 #define __itkGeometricalQuadEdge_hxx
+
 #include "itkGeometricalQuadEdge.h"
+
 #include "vcl_limits.h"
+
 #include <iostream>
 
 namespace itk
 {
 /**
  */
-template< typename TVRef, typename TFRef,
-          typename TPrimalData, typename TDualData, bool PrimalDual >
-const typename GeometricalQuadEdge< TVRef, TFRef,
-                                    TPrimalData, TDualData, PrimalDual >::LineCellIdentifier
-GeometricalQuadEdge< TVRef, TFRef, TPrimalData, TDualData, PrimalDual >::m_NoPoint =
-  vcl_numeric_limits< LineCellIdentifier>::max();
+template< typename TVRef, typename TFRef, typename TPrimalData, typename TDualData, bool PrimalDual>
+const typename GeometricalQuadEdge< TVRef, TFRef, TPrimalData, TDualData, PrimalDual >
+  ::PrimalPointIdentifierType
+GeometricalQuadEdge< TVRef, TFRef, TPrimalData, TDualData, PrimalDual >
+  ::m_NoPoint = vcl_numeric_limits< PrimalPointIdentifierType >::max();
+
+template< typename TVRef, typename TFRef, typename TPrimalData, typename TDualData, bool PrimalDual>
+const typename GeometricalQuadEdge< TVRef, TFRef, TPrimalData, TDualData, PrimalDual >
+  ::PrimalFaceIdentifierType
+GeometricalQuadEdge< TVRef, TFRef, TPrimalData, TDualData, PrimalDual >
+  ::m_NoFace = vcl_numeric_limits< PrimalFaceIdentifierType >::max();
 
 /**
  *   Constructor
@@ -40,8 +48,7 @@ template< typename TVRef, typename TFRef,
 GeometricalQuadEdge< TVRef, TFRef, TPrimalData, TDualData, PrimalDual >
 ::GeometricalQuadEdge()
 {
-  this->m_Origin.first  = m_NoPoint;
-  this->m_Origin.second = m_NoPoint;
+  this->m_Origin  = OriginRefType( m_NoPoint, m_NoFace );
   this->m_DataSet = false;
 }
 

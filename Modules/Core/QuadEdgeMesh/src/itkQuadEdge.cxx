@@ -431,6 +431,7 @@ QuadEdge
 #endif
 }
 
+// ---------------------------------------------------------------------
 bool
 QuadEdge
 ::IsEdgeInOnextRing(Self *testEdge) const
@@ -454,6 +455,7 @@ QuadEdge
   return false;
 }
 
+// ---------------------------------------------------------------------
 bool
 QuadEdge
 ::IsLnextGivenSizeCyclic(const int size) const
@@ -468,6 +470,7 @@ QuadEdge
   return ( this == iterated );
 }
 
+// ---------------------------------------------------------------------
 unsigned int
 QuadEdge
 ::GetOrder() const

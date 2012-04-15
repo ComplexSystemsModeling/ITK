@@ -48,6 +48,8 @@
  * Macro that defines overloaded members for the second order
  * topological accessors.
  *
+ * \todo This macro should be at GeometricalQuadEdgeLevel
+ *
  * @param st Superclass type.
  * @param pt Primal edge type.
  * @param dt Dual edge type.
@@ -231,22 +233,12 @@ public:
 
   /** Basic iterators methods. */
   inline itkQEDefineIteratorMethodsMacro(Onext);
-  // itkQEDefineIteratorMethodsMacro( Sym );
-  // itkQEDefineIteratorMethodsMacro( Lnext );
-  // itkQEDefineIteratorMethodsMacro( Rnext );
-  // itkQEDefineIteratorMethodsMacro( Dnext );
-  // itkQEDefineIteratorMethodsMacro( Oprev );
-  // itkQEDefineIteratorMethodsMacro( Lprev );
-  // itkQEDefineIteratorMethodsMacro( Rprev );
-  // itkQEDefineIteratorMethodsMacro( Dprev );
-  // itkQEDefineIteratorMethodsMacro( InvOnext );
-  // itkQEDefineIteratorMethodsMacro( InvLnext );
-  // itkQEDefineIteratorMethodsMacro( InvRnext );
-  // itkQEDefineIteratorMethodsMacro( InvDnext );
 
   /** Object creation methods. */
   QuadEdge();
   virtual ~QuadEdge();
+
+  //----------------------------------------------------------------------------
 
   /** Sub-algebra Set methods. */
   inline void SetOnext(Self *onext) { this->m_Onext = onext; }
@@ -273,11 +265,9 @@ public:
    * \warning This class only handles of the connectivity and is not aware
    *    of the geometry that lies at the \ref GeometricalQuadEdge level.
    *    It is strongly discouraged to use this method. Instead you should
-   *    use itk::QuadEdgeMesh::Splice it's geometry aware version.
+   *    use itk::QuadEdgeMesh::Splice its geometry aware version.
    *
    */
-// TODO fix this ref
-//   * \sa \ref DoxySurgeryConnectivity
   inline void Splice(Self *b)
   {
     Self *aNext     = this->GetOnext();
@@ -293,73 +283,68 @@ public:
     beta->SetOnext(alphaNext);
   }
 
+  //----------------------------------------------------------------------------
+
   //  Second order accessors.
 
   /** Returns the symetric edge
    * (see "Accessing adjacent edges"). */
   inline Self * GetSym()
   {
-    if ( this->m_Rot )
+    if( this->m_Rot )
       {
-      return ( this->m_Rot->m_Rot );
+      return( this->m_Rot->m_Rot );
       }
-    return ( this->m_Rot );
+    return( this->m_Rot );
   }
 
   inline const Self * GetSym() const
   {
-    if ( this->m_Rot )
+    if( this->m_Rot )
       {
-      return ( this->m_Rot->m_Rot );
+      return( this->m_Rot->m_Rot );
       }
-    return ( this->m_Rot );
+    return( this->m_Rot );
   }
 
   /** Returns next edge with same Left face
    * (see "Accessing adjacent edges"). */
   Self * GetLnext();
-
   const Self * GetLnext() const;
 
   /** Returns next edge with same Right face. The first edge
    * encountered when moving counter-clockwise from e around e->Right.
    * (see "Accessing adjacent edges"). */
   Self * GetRnext();
-
   const Self * GetRnext() const;
 
   /** Returns next edge with same right face and same Destination. The
    *  first edge encountered when moving counter-clockwise from e
    *  (see "Accessing adjacent edges"). */
   Self * GetDnext();
-
   const Self * GetDnext() const;
 
   /** Returns previous edge with same Origin
    *  (see "Accessing adjacent edges"). */
   Self * GetOprev();
-
   const Self * GetOprev() const;
 
   /** Returns previous edge with same Left face. The first edge
    *  encountered when moving clockwise from e around e->Left.
    * (see "Accessing adjacent edges"). */
   Self * GetLprev();
-
   const Self * GetLprev() const;
 
   /** Returns the previous edge with same Right face. The first edge
    *  encountered when moving clockwise from e around e->Right.
    *  (see "Accessing adjacent edges"). */
   Self * GetRprev();
-
   const Self * GetRprev() const;
 
   /** Returns the previous edge with same Right face and same Destination.
    *  The first edge encountered when moving clockwise from e around e->Dest.
    *  (see "Accessing adjacent edges"). */
   Self * GetDprev();
-
   const Self * GetDprev() const;
 
   /** Inverse operators */
@@ -402,13 +387,22 @@ public:
   inline const Self * GetInvRnext() const { return this->GetRprev(); }
   inline const Self * GetInvDnext() const { return this->GetDprev(); }
 
+  //----------------------------------------------------------------------------
+
   /** Queries. */
+  // This checks the basic condition of a just created QE
   inline bool IsHalfEdge() const { return ( ( m_Onext == this ) || ( m_Rot == NULL ) ); }
+
+  // This disregards Rot connection, and check if the QE is connected
   inline bool IsIsolated() const { return ( this == this->GetOnext() ); }
+
+  // This tests if a given edge belongs to the oNext ring of this QE.
   bool IsEdgeInOnextRing(Self *testEdge) const;
 
+  // This checks the number of edges of the left face.
   bool IsLnextGivenSizeCyclic(const int size) const;
 
+  // This counts the number of edges belonging to this oNext ring (Valence)
   unsigned int GetOrder() const;
 
 private:

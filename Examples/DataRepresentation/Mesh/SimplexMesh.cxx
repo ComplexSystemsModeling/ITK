@@ -111,6 +111,30 @@ int main( int argc, char ** argv )
             myPrimalMesh->SetDualPoint( numberOfDualPoints, d_point );
             CellIdentifier cellIdentifier = cellIterator.Index();
             DualPointFromPrimalTriangleLUT[cellIdentifier] = numberOfDualPoints;
+
+ 			// step 1 - loop on all edges of cell
+			// step 2 - Get left face of each edge (dualpoint) rot or GetLeft
+			// setp 3 - assign cellIdentifier and pointIdentifier to edge (QuadEdgeMeshTraits::GeometricalQuadEdge::OriginRefType)
+
+			SimplexMeshType::QEType::GeometricalQuadEdge::DualOriginRefType dualOriginRef;
+			dualOriginRef.first = cellIdentifier;
+			dualOriginRef.second = numberOfDualPoints;
+
+			SimplexMeshType::CellAutoPointer cellPointer;
+			myPrimalMesh->GetCell( cellIdentifier, cellPointer );
+			//QuadEdgeType *currentEdge = cellPointer->GetEdgeRingEntry();
+			PointIdConstIterator cellPointsItertor = cellPointer->GetPointIds();
+			
+			PointType primalPoint;
+			myPrimalMesh->GetPoint( cellPointsItertor.value, primalPoint);
+			QuadEdgeType * currentEdge = primalPoint.GetEdge();
+			QuadEdgeType *firstEdge = currentEdge;
+			do
+			  {
+			  currentEdge->SetLeft( dualOriginRef );
+              currentEdge = currentEdge->GetLnext();
+			  }while( currentEdge != firstEdge );
+
             numberOfDualPoints++;
             }
           break;
@@ -157,6 +181,7 @@ int main( int argc, char ** argv )
 
           // push the dual point ID to the point ID list
           pointidlist.push_back( DualPointFromPrimalTriangleLUT[ leftTriangle.first ] );
+		  pointidlist.push_back( leftTriangle.second );
 
           current = current->GetOnext();
 

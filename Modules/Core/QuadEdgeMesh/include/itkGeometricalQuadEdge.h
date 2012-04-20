@@ -86,7 +86,7 @@ public:
   typedef TDualData   DualDataType;
 
   typedef typename OriginRefType::first_type     PrimalPointIdentifierType;
-  typedef typenema DualOriginRefType::first_type PrimalFaceIdentifierType;
+  typedef typename DualOriginRefType::first_type PrimalFaceIdentifierType;
 
   /** Iterator types. */
   typedef QuadEdgeMeshIteratorGeom< Self >      IteratorGeom;
@@ -262,7 +262,8 @@ protected:
   OriginRefType      m_Origin;    // Geometrical information
   PrimalDataType     m_Data;      // User data associated to this edge.
   bool               m_DataSet;   // Indicates if the data is set.
-  LineCellIdentifier m_LineCellIdent;
+
+  PrimalFaceIdentifierType m_LineCellIdent;
 };
 }
 

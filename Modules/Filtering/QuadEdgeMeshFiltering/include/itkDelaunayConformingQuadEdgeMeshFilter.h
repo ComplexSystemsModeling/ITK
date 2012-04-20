@@ -80,7 +80,7 @@ public:
   typedef typename OutputMeshType::CellIdentifier          OutputCellIdentifier;
   typedef typename OutputMeshType::EdgeCellType            OutputEdgeCellType;
   typedef typename OutputMeshType::QEType                  OutputQEType;
-  typedef typename OutputQEType::LineCellIdentifier        OutputLineCellIdentifier;
+  typedef typename OutputQEType::PrimalFaceIdentifierType  OutputLineCellIdentifier;
   typedef typename OutputMeshType::VectorType              OutputVectorType;
   typedef typename OutputQEType::IteratorGeom              OutputQEIterator;
   typedef typename OutputMeshType::PointsContainerPointer  OutputPointsContainerPointer;

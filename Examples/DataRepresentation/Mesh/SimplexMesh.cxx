@@ -28,6 +28,8 @@ int main( int argc, char ** argv )
   typedef SimplexMeshType::PointIdList     PointIdList;
   typedef SimplexMeshType::QEType          QuadEdgeType;
 
+  typedef SimplexMeshType::EdgeListPointerType EdgeListPointerType;
+
   typedef CellType::PointIdConstIterator PointIdConstIterator;
 
   typedef PointsContainer::ConstIterator PointIterator;
@@ -112,28 +114,30 @@ int main( int argc, char ** argv )
             CellIdentifier cellIdentifier = cellIterator.Index();
             DualPointFromPrimalTriangleLUT[cellIdentifier] = numberOfDualPoints;
 
- 			// step 1 - loop on all edges of cell
-			// step 2 - Get left face of each edge (dualpoint) rot or GetLeft
-			// setp 3 - assign cellIdentifier and pointIdentifier to edge (QuadEdgeMeshTraits::GeometricalQuadEdge::OriginRefType)
+            // step 1 - loop on all edges of cell
+            // step 2 - Get left face of each edge (dualpoint) rot or GetLeft
+            // step 3 - assign cellIdentifier and pointIdentifier to edge
+            //          (QuadEdgeMeshTraits::GeometricalQuadEdge::OriginRefType)
 
-			SimplexMeshType::QEType::GeometricalQuadEdge::DualOriginRefType dualOriginRef;
-			dualOriginRef.first = cellIdentifier;
-			dualOriginRef.second = numberOfDualPoints;
+            SimplexMeshType::QEType::GeometricalQuadEdge::DualOriginRefType dualOriginRef;
+            dualOriginRef.first = cellIdentifier;
+            dualOriginRef.second = numberOfDualPoints;
 
-			SimplexMeshType::CellAutoPointer cellPointer;
-			myPrimalMesh->GetCell( cellIdentifier, cellPointer );
-			//QuadEdgeType *currentEdge = cellPointer->GetEdgeRingEntry();
-			PointIdConstIterator cellPointsItertor = cellPointer->GetPointIds();
+            SimplexMeshType::CellAutoPointer cellPointer;
+            myPrimalMesh->GetCell( cellIdentifier, cellPointer );
+            //QuadEdgeType *currentEdge = cellPointer->GetEdgeRingEntry();
+            PointIdConstIterator cellPointsItertor = cellPointer->GetPointIds();
 			
-			PointType primalPoint;
-			myPrimalMesh->GetPoint( cellPointsItertor.value, primalPoint);
-			QuadEdgeType * currentEdge = primalPoint.GetEdge();
-			QuadEdgeType *firstEdge = currentEdge;
-			do
-			  {
-			  currentEdge->SetLeft( dualOriginRef );
+            PointType primalPoint;
+            myPrimalMesh->GetPoint( cellPointsItertor.value, primalPoint);
+            QuadEdgeType * currentEdge = primalPoint.GetEdge();
+            QuadEdgeType *firstEdge = currentEdge;
+            do
+              {
+              currentEdge->SetLeft( dualOriginRef );
               currentEdge = currentEdge->GetLnext();
-			  }while( currentEdge != firstEdge );
+              }
+            while( currentEdge != firstEdge );
 
             numberOfDualPoints++;
             }
@@ -200,7 +204,7 @@ int main( int argc, char ** argv )
   //-----------------------------------------
 
   BoundaryLocatorType::Pointer boundaryEdges = BoundaryLocatorType::New();
-  SimplexMeshType::EdgeListPointerType boundaryEdgesPointerList = boundaryEdges->Evaluate( *myPrimalMesh );
+  EdgeListPointerType boundaryEdgesPointerList = boundaryEdges->Evaluate( *myPrimalMesh );
 
   // for each boundary
   unsigned int i = 0;

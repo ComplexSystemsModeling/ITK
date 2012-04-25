@@ -93,25 +93,27 @@ public:
     }
 
   // NOTE ALEX: this does not create underlying QE layer for now
-  void AddDualFace( const PointIdList & points )
+  CellIdentifier AddDualFace( const PointIdList & points )
     {
-    // Create the cell without unterlying QE layer and add it to the container
+    // Create the cell without underlying QE layer and add it to the container
     PolygonCellType *faceCell = new PolygonCellType( points.size() );
 
     CellIdentifier fid = m_DualCellsContainer->size();
     faceCell->SetIdent( fid );
     CellAutoPointer face;
     face.TakeOwnership( faceCell );
-    PointIdentifier nbOfPoints = points.size();
-    for( unsigned int i = 0; i < nbOfPoints; i++ )
+    for( unsigned int i = 0; i < points.size(); i++ )
       face->SetPointId( i, points[i] );
 
     m_DualCellsContainer->InsertElement( fid, face.ReleaseOwnership() );
+
+    return fid;
     }
 
   void AddDualEdge( const PointIdentifier& pid1, const PointIdentifier& pid2 )
     {
     // Create the cell without unterlying QE layer and add it to the container
+    // NOTE ALEX: is it actually possible to have an edgecell type without QE?
     EdgeCellType *edgeCell = new EdgeCellType( );
 
     CellIdentifier   eid = m_DualEdgeCellsContainer->size();

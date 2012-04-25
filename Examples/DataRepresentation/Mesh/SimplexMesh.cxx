@@ -126,10 +126,10 @@ int main( int argc, char ** argv )
             SimplexMeshType::CellAutoPointer cellPointer;
             myPrimalMesh->GetCell( cellIdentifier, cellPointer );
             //QuadEdgeType *currentEdge = cellPointer->GetEdgeRingEntry();
-            PointIdConstIterator cellPointsItertor = cellPointer->GetPointIds();
+            PointIdConstIterator cellPointsIterator = cellPointer->GetPointIds();
 			
             PointType primalPoint;
-            myPrimalMesh->GetPoint( cellPointsItertor.value, primalPoint);
+            myPrimalMesh->GetPoint( *cellPointsIterator, &primalPoint);
             QuadEdgeType * currentEdge = primalPoint.GetEdge();
             QuadEdgeType *firstEdge = currentEdge;
             do

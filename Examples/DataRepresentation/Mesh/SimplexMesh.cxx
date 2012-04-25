@@ -9,8 +9,18 @@
 
 #include <iostream>
 
-int main( int argc, char ** argv )
+
+template< typename MeshType >
+bool
+ComputeDualPointFromFaceAndSet(
+  MeshType* myPrimalMesh,
+  typename MeshType::CellsContainer::ConstIterator cellIterator,
+  typename MeshType::PointIdentifier numberOfDualPoints );
+
+
+int main( int, char ** )
 {
+
   //-----------------------------------------
   //  Define all the types we will work with
   //-----------------------------------------
@@ -27,6 +37,7 @@ int main( int argc, char ** argv )
   typedef SimplexMeshType::PointType       PointType;
   typedef SimplexMeshType::PointIdList     PointIdList;
   typedef SimplexMeshType::QEType          QuadEdgeType;
+  typedef SimplexMeshType::PolygonCellType PolygonCellType;
 
   typedef SimplexMeshType::EdgeListPointerType EdgeListPointerType;
 
@@ -41,9 +52,6 @@ int main( int argc, char ** argv )
   //--------------------------------------------------------------
   // Create the DataStructures that will hold the data in memory
   //--------------------------------------------------------------
-
-  // LUT that will need to be integrated in the DataStructure
-  std::map< CellIdentifier ,PointIdentifier >   DualPointFromPrimalTriangleLUT;
 
   // main DataStructure
   SimplexMeshType::Pointer myPrimalMesh = SimplexMeshType::New();
@@ -80,65 +88,18 @@ int main( int argc, char ** argv )
         case 1: //LINE_CELL:
         case 2: //TRIANGLE_CELL:
         case 3: //QUADRILATERAL_CELL:
+          // NOTE ALEX: all those should not happen in a QEMesh
           break;
         case 4: //POLYGON_CELL:
           if( cellIterator.Value()->GetNumberOfPoints() > 3 )
             {
+            // NOTE ALEX: this is nto true, the code works with polygons as well
             std::cout << "We found a polygon, this is not handled right now." << std::endl;
             found = true;
             }
-          else
+          else  // triangle
             {
-            // compute dual point coordinate
-            PointIdConstIterator current= cellIterator.Value()->PointIdsBegin();
-            PointIdConstIterator end    = cellIterator.Value()->PointIdsEnd();
-            PointType d_point;
-            d_point[0] = 0.0;
-            d_point[1] = 0.0;
-            d_point[2] = 0.0;
-            while( current != end )
-              {
-              PointType point = myPrimalMesh->GetPoint( *current );
-              for( unsigned int i =0; i < dimension; i++ )
-                {
-                d_point[i] += point[i];
-                }
-              current++;
-              }
-            for( unsigned int i =0; i < dimension; i++ )
-              {
-              d_point[i] /= dimension;
-              }
-            // push dual point in dualPoints container
-            myPrimalMesh->SetDualPoint( numberOfDualPoints, d_point );
-            CellIdentifier cellIdentifier = cellIterator.Index();
-            DualPointFromPrimalTriangleLUT[cellIdentifier] = numberOfDualPoints;
-
-            // step 1 - loop on all edges of cell
-            // step 2 - Get left face of each edge (dualpoint) rot or GetLeft
-            // step 3 - assign cellIdentifier and pointIdentifier to edge
-            //          (QuadEdgeMeshTraits::GeometricalQuadEdge::OriginRefType)
-
-            SimplexMeshType::QEType::GeometricalQuadEdge::DualOriginRefType dualOriginRef;
-            dualOriginRef.first = cellIdentifier;
-            dualOriginRef.second = numberOfDualPoints;
-
-            SimplexMeshType::CellAutoPointer cellPointer;
-            myPrimalMesh->GetCell( cellIdentifier, cellPointer );
-            //QuadEdgeType *currentEdge = cellPointer->GetEdgeRingEntry();
-            PointIdConstIterator cellPointsIterator = cellPointer->GetPointIds();
-			
-            PointType primalPoint;
-            myPrimalMesh->GetPoint( *cellPointsIterator, &primalPoint);
-            QuadEdgeType * currentEdge = primalPoint.GetEdge();
-            QuadEdgeType *firstEdge = currentEdge;
-            do
-              {
-              currentEdge->SetLeft( dualOriginRef );
-              currentEdge = currentEdge->GetLnext();
-              }
-            while( currentEdge != firstEdge );
-
+            ComputeDualPointFromFaceAndSet< SimplexMeshType >( myPrimalMesh, cellIterator, numberOfDualPoints );
             numberOfDualPoints++;
             }
           break;
@@ -168,7 +129,7 @@ int main( int argc, char ** argv )
       {
       // grab the QEdge
       PointType point = pointIterator.Value();
-      QuadEdgeType * start = point.GetEdge();
+      QuadEdgeType * start   = point.GetEdge();
       QuadEdgeType * current = point.GetEdge();
 
       // create a point ID list to hold the dual point IDs while
@@ -184,8 +145,7 @@ int main( int argc, char ** argv )
           QuadEdgeType::DualOriginRefType leftTriangle = current->GetLeft();
 
           // push the dual point ID to the point ID list
-          pointidlist.push_back( DualPointFromPrimalTriangleLUT[ leftTriangle.first ] );
-		  pointidlist.push_back( leftTriangle.second );
+          pointidlist.push_back( leftTriangle.second );
 
           current = current->GetOnext();
 
@@ -228,7 +188,7 @@ int main( int argc, char ** argv )
       {
       // create a new point in the middle of the edge
       // this is a dual point. Cells are sample in 2d, boundaries are sample in 1D
-      PointIdentifier originPointId = currentEdge->GetOrigin().first;
+      PointIdentifier originPointId      = currentEdge->GetOrigin().first;
       PointIdentifier destinationPointId = currentEdge->GetDestination().first;
 
       PointType originPoint = myPrimalMesh->GetPoint( originPointId );
@@ -242,11 +202,11 @@ int main( int argc, char ** argv )
       // add the new border point P1 to the dual point container
       currentPointId = myPrimalMesh->AddDualPoint( currentPoint );
 
-      // find the dual point P2 associated with the face on the left
+      // find the dual point P2 associated with the face on the right
       QuadEdgeType::DualOriginRefType leftTriangle = currentEdge->GetRight();
 
       // add the dual edge P1-P2
-      PointIdentifier leftDualPointId = DualPointFromPrimalTriangleLUT[ leftTriangle.first ];
+      PointIdentifier leftDualPointId = leftTriangle.second;
       myPrimalMesh->AddDualEdge( currentPointId, leftDualPointId );
 
       // add the edge linking two new border dual points
@@ -264,7 +224,7 @@ int main( int argc, char ** argv )
         do
           {
           QuadEdgeType::DualOriginRefType myleftTriangle = myEdge->GetLeft();
-          PointIdentifier myleftDualPointId =  DualPointFromPrimalTriangleLUT[ myleftTriangle.first ];
+          PointIdentifier myleftDualPointId =  myleftTriangle.second;
           pointidlist.push_back( myleftDualPointId );
           myEdge = myEdge->GetOnext();
           }
@@ -288,7 +248,7 @@ int main( int argc, char ** argv )
     do
       {
       QuadEdgeType::DualOriginRefType myleftTriangle = myEdge->GetLeft();
-      PointIdentifier myleftDualPointId =  DualPointFromPrimalTriangleLUT[ myleftTriangle.first ];
+      PointIdentifier myleftDualPointId =  myleftTriangle.second;
       pointidlist.push_back( myleftDualPointId );
       myEdge = myEdge->GetOnext();
       }
@@ -321,4 +281,79 @@ int main( int argc, char ** argv )
   writer2->Write();
 
   return EXIT_SUCCESS;
+}
+
+
+
+
+template< typename MeshType >
+bool
+ComputeDualPointFromFaceAndSet(
+  MeshType* myPrimalMesh,
+  typename MeshType::CellsContainer::ConstIterator cellIterator,
+  typename MeshType::PointIdentifier  numberOfDualPoints )
+{
+  // NOTE ALEX: to extract from MeshType
+  const unsigned int dimension = 3;
+
+  // typedef typename MeshType::PointIdentifier PointIdentifier;
+  typedef typename MeshType::CellIdentifier  CellIdentifier;
+  // typedef typename MeshType::PointsContainer PointsContainer;
+  // typedef typename MeshType::CellsContainer  CellsContainer;
+  typedef typename MeshType::CellType        CellType;
+  typedef typename MeshType::PointType       PointType;
+  // typedef typename MeshType::PointIdList     PointIdList;
+  typedef typename MeshType::QEType          QuadEdgeType;
+  typedef typename MeshType::PolygonCellType PolygonCellType;
+
+  typedef typename CellType::PointIdConstIterator PointIdConstIterator;
+
+  // typedef PointsContainer::ConstIterator PointIterator;
+  // typedef CellsContainer::ConstIterator  CellIterator;
+  typedef typename QuadEdgeType::GeometricalQuadEdge::DualOriginRefType DOrgRefType;
+  typedef typename MeshType::CellAutoPointer CellAutoPointer;
+
+  // 1. compute dual point coordinate and push it to the container
+  PointIdConstIterator current= cellIterator.Value()->PointIdsBegin();
+  PointIdConstIterator end    = cellIterator.Value()->PointIdsEnd();
+  PointType d_point;
+  for( unsigned int i = 0; i < 3; i++ ) // dimension; i++ )
+    {
+    d_point[i] = 0.0;
+    }
+  while( current != end )
+    {
+    PointType point = myPrimalMesh->GetPoint( *current );
+    for( unsigned int i = 0; i < 3; i++ ) // dimension; i++ )
+      {
+      d_point[i] += point[i];
+      }
+    current++;
+    }
+  for( unsigned int i =0; i < 3; i++ ) // dimension; i++ )
+    {
+    d_point[i] /= dimension;
+    }
+  myPrimalMesh->SetDualPoint( numberOfDualPoints, d_point );
+
+  // 2. Compute the new OriginRefType and set all the QEdges
+
+  CellIdentifier cellIdentifier = cellIterator.Index();
+  DOrgRefType dualOriginRef = DOrgRefType( cellIdentifier, numberOfDualPoints );
+
+
+  // NOTE ALEX: isn't there a method in QE to do that?
+  CellAutoPointer cellPointer;
+  myPrimalMesh->GetCell( cellIdentifier, cellPointer );
+  PolygonCellType* myCell = dynamic_cast< PolygonCellType* >( cellPointer.GetPointer() );
+  QuadEdgeType *currentEdge = myCell->GetEdgeRingEntry();
+  QuadEdgeType *firstEdge = currentEdge;
+  do
+    {
+    currentEdge->SetLeft( dualOriginRef );
+    currentEdge = currentEdge->GetLnext();
+    }
+  while( currentEdge != firstEdge );
+
+  return true;
 }

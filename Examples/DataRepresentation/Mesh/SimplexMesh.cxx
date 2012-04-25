@@ -17,6 +17,17 @@ ComputeDualPointFromFaceAndSet(
   typename MeshType::CellsContainer::ConstIterator cellIterator,
   typename MeshType::PointIdentifier numberOfDualPoints );
 
+template< typename MeshType >
+bool
+ComputeDualPointsForAllPolygons(
+  MeshType* myPrimalMesh
+  );
+
+template< typename MeshType >
+bool
+ComputeDualPolygonsForAllPoints(
+  MeshType* myPrimalMesh
+  );
 
 int main( int, char ** )
 {
@@ -71,93 +82,14 @@ int main( int, char ** )
   //-------------------------------------------------------
 
   std::cout << "Generation of dual points: barycenter of primal cells" << std::endl;
-
-  const CellsContainer *primalCells = myPrimalMesh->GetCells();
-  if( primalCells )
-    {
-    CellIterator cellIterator = primalCells->Begin();
-    CellIterator cellEnd = primalCells->End();
-
-    bool found = false;
-    unsigned int numberOfDualPoints = 0;
-    while( ( cellIterator != cellEnd ) && !found )
-      {
-      switch ( cellIterator.Value()->GetType() )
-        {
-        case 0: //VERTEX_CELL:
-        case 1: //LINE_CELL:
-        case 2: //TRIANGLE_CELL:
-        case 3: //QUADRILATERAL_CELL:
-          // NOTE ALEX: all those should not happen in a QEMesh
-          break;
-        case 4: //POLYGON_CELL:
-          if( cellIterator.Value()->GetNumberOfPoints() > 3 )
-            {
-            // NOTE ALEX: this is nto true, the code works with polygons as well
-            std::cout << "We found a polygon, this is not handled right now." << std::endl;
-            found = true;
-            }
-          else  // triangle
-            {
-            ComputeDualPointFromFaceAndSet< SimplexMeshType >( myPrimalMesh, cellIterator, numberOfDualPoints );
-            numberOfDualPoints++;
-            }
-          break;
-        case 7: //QUADRATIC_EDGE_CELL:
-        case 8: //QUADRATIC_TRIANGLE_CELL:
-          break;
-        default:
-          std::cerr << "Unhandled cell (volumic?)." << std::endl;
-        }
-      cellIterator++;
-      }
-    }
+  ComputeDualPointsForAllPolygons< SimplexMeshType >( myPrimalMesh );
 
   //-------------------------------------------------------
   // Second pass: dual cells (polygons) for primal points
   //-------------------------------------------------------
 
   std::cout << "Generate Dual Cells from the primal points" << std::endl;
-
-  const PointsContainer *primalPoints = myPrimalMesh->GetPoints();
-  if( primalPoints )
-    {
-    PointIterator pointIterator = primalPoints->Begin();
-    PointIterator pointEnd      = primalPoints->End();
-
-    while( pointIterator != pointEnd )
-      {
-      // grab the QEdge
-      PointType point = pointIterator.Value();
-      QuadEdgeType * start   = point.GetEdge();
-      QuadEdgeType * current = point.GetEdge();
-
-      // create a point ID list to hold the dual point IDs while
-      // we are iterating around a primal point to create the dual cell
-      PointIdList pointidlist;
-
-      if( point.IsInternal() )
-        {
-        // iterate around the o-ring
-        do
-          {
-          // get the id of the face on the left
-          QuadEdgeType::DualOriginRefType leftTriangle = current->GetLeft();
-
-          // push the dual point ID to the point ID list
-          pointidlist.push_back( leftTriangle.second );
-
-          current = current->GetOnext();
-
-          } while( current != start );
-
-        // point list is complete, add the dual cell to the dual mesh;
-        myPrimalMesh->AddDualFace( pointidlist );
-        }
-      // next point
-      pointIterator++;
-      }
-    }
+  ComputeDualPolygonsForAllPoints< SimplexMeshType >( myPrimalMesh );
 
   //-----------------------------------------
   // last pass: Treat the borders as 1D cells
@@ -302,7 +234,6 @@ ComputeDualPointFromFaceAndSet(
   // typedef typename MeshType::CellsContainer  CellsContainer;
   typedef typename MeshType::CellType        CellType;
   typedef typename MeshType::PointType       PointType;
-  // typedef typename MeshType::PointIdList     PointIdList;
   typedef typename MeshType::QEType          QuadEdgeType;
   typedef typename MeshType::PolygonCellType PolygonCellType;
 
@@ -310,7 +241,7 @@ ComputeDualPointFromFaceAndSet(
 
   // typedef PointsContainer::ConstIterator PointIterator;
   // typedef CellsContainer::ConstIterator  CellIterator;
-  typedef typename QuadEdgeType::GeometricalQuadEdge::DualOriginRefType DOrgRefType;
+  typedef typename QuadEdgeType::DualOriginRefType DOrgRefType;
   typedef typename MeshType::CellAutoPointer CellAutoPointer;
 
   // 1. compute dual point coordinate and push it to the container
@@ -355,5 +286,111 @@ ComputeDualPointFromFaceAndSet(
     }
   while( currentEdge != firstEdge );
 
+  return true;
+}
+
+
+
+template< typename MeshType >
+bool
+ComputeDualPointsForAllPolygons(
+  MeshType* myPrimalMesh
+  )
+{
+  typedef typename MeshType::CellsContainer       CellsContainer;
+  typedef typename CellsContainer::ConstIterator  CellIterator;
+
+  const CellsContainer *primalCells = myPrimalMesh->GetCells();
+  if( primalCells )
+    {
+    CellIterator cellIterator = primalCells->Begin();
+    CellIterator cellEnd = primalCells->End();
+
+    bool found = false;
+    // NOTE ALEX: type assumption! this should be PointIdentifier.
+    unsigned int numberOfDualPoints = 0;
+    while( ( cellIterator != cellEnd ) && !found )
+      {
+      switch ( cellIterator.Value()->GetType() )
+        {
+        case 0: //VERTEX_CELL:
+        case 1: //LINE_CELL:
+        case 2: //TRIANGLE_CELL:
+        case 3: //QUADRILATERAL_CELL:
+          // NOTE ALEX: all those should not happen in a QEMesh
+          break;
+        case 4: //POLYGON_CELL:
+          if( cellIterator.Value()->GetNumberOfPoints() > 3 )
+            {
+            // NOTE ALEX: this is nto true, the code works with polygons as well
+            std::cout << "We found a polygon, this is not handled right now." << std::endl;
+            found = true;
+            }
+          else  // triangle
+            {
+            ComputeDualPointFromFaceAndSet< MeshType >( myPrimalMesh, cellIterator, numberOfDualPoints );
+            numberOfDualPoints++;
+            }
+          break;
+        case 7: //QUADRATIC_EDGE_CELL:
+        case 8: //QUADRATIC_TRIANGLE_CELL:
+          break;
+        default:
+          std::cerr << "Unhandled cell (volumic?)." << std::endl;
+        }
+      cellIterator++;
+      }
+    }
+  return true;
+}
+
+template< typename MeshType >
+bool
+ComputeDualPolygonsForAllPoints(
+  MeshType* myPrimalMesh
+  )
+{
+  typedef typename MeshType::PointsContainer       PointsContainer;
+  typedef typename PointsContainer::ConstIterator  PointIterator;
+  typedef typename MeshType::PointIdList           PointIdList;
+  typedef typename MeshType::PointType             PointType;
+  typedef typename MeshType::QEType                QuadEdgeType;
+
+  const PointsContainer *primalPoints = myPrimalMesh->GetPoints();
+  if( primalPoints )
+    {
+    PointIterator pointIterator = primalPoints->Begin();
+    PointIterator pointEnd      = primalPoints->End();
+
+    while( pointIterator != pointEnd )
+      {
+      // grab the QEdge
+      PointType point = pointIterator.Value();
+      QuadEdgeType * start   = point.GetEdge();
+      QuadEdgeType * current = start;
+
+      // create a point ID list to hold the dual point IDs while
+      // we are iterating around a primal point to create the dual cell
+      PointIdList pointidlist;
+
+      // check that we are not on the border
+      if( point.IsInternal() )
+        {
+        // iterate around the o-ring
+        do
+          {
+          // push the dual point ID to the point ID list
+          pointidlist.push_back( current->GetLeft().second );
+          current = current->GetOnext();
+
+          } while( current != start );
+
+        // point list is complete, add the dual cell to the dual mesh;
+        myPrimalMesh->AddDualFace( pointidlist );
+        }
+      // next point
+      pointIterator++;
+      }
+    }
   return true;
 }

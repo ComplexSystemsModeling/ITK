@@ -29,6 +29,22 @@ ComputeDualPolygonsForAllPoints(
   MeshType* myPrimalMesh
   );
 
+template< typename MeshType >
+bool
+CreateDualCellOfBorderPoint(
+  MeshType*                          myPrimalMesh,
+  typename MeshType::PointIdentifier firstPointId,
+  typename MeshType::PointIdentifier previousPointId,
+  typename MeshType::QEType*         currentEdge
+  );
+
+template< typename MeshType >
+bool
+CreateDualOfBorderPointsAndEdges(
+  MeshType*                          myPrimalMesh,
+  typename MeshType::QEType*         currentEdge
+  );
+
 int main( int, char ** )
 {
 
@@ -102,110 +118,12 @@ int main( int, char ** )
   unsigned int i = 0;
   while( !boundaryEdgesPointerList->empty() )
     {
+    std::cout << "Boundary #" << i++ << std::endl;
 
-    std::cout << "Boundary #" << i << std::endl;
-    i++;
 
-    // get the edge representing the first boundary end remove it from the list
-    QuadEdgeType* firstEdge = boundaryEdgesPointerList->front();
-    QuadEdgeType* currentEdge = firstEdge;
+    CreateDualOfBorderPointsAndEdges< SimplexMeshType >(
+      myPrimalMesh, boundaryEdgesPointerList->front() );
     boundaryEdgesPointerList->pop_front();
-
-    // circulate around the boundary and do what you have to do
-    bool firstTime = true;
-    PointIdentifier previousPointId;
-    PointIdentifier currentPointId;
-    PointIdentifier firstPointId = myPrimalMesh->GetNumberOfDualPoints();
-    do
-      {
-      // 1. always create a new point in the middle of the edge
-
-      // this is a dual point. Cells are sampled in 2d, boundaries are sampled in 1D
-      PointIdentifier originPointId      = currentEdge->GetOrigin().first;
-      PointIdentifier destinationPointId = currentEdge->GetDestination().first;
-
-      PointType originPoint = myPrimalMesh->GetPoint( originPointId );
-      PointType destinationPoint = myPrimalMesh->GetPoint( destinationPointId );
-      PointType currentPoint;
-      for( unsigned int k =0; k<dimension; k++ )
-        {
-        currentPoint[k] = (originPoint[k] + destinationPoint[k]) / 2 ;
-        }
-
-      // add the new border point P1 to the dual point container
-      currentPointId = myPrimalMesh->AddDualPoint( currentPoint );
-
-      // 2. always add the edge between this (1D) point, and previous (2D) point
-
-      // find the dual point P2 associated with the face on the right
-      // NOTE ALEX: do we know on which side the hole is. Is it stable?
-      QuadEdgeType::DualOriginRefType leftTriangle = currentEdge->GetRight();
-
-      // add the dual edge P1-P2
-      PointIdentifier leftDualPointId = leftTriangle.second;
-      myPrimalMesh->AddDualEdge( currentPointId, leftDualPointId );
-
-      // 3. Almost always add the dual edge along the border,
-      // in which case we also create the dual cell.
-      // NOTE ALEX: how to deal with OriginRefType in this case?
-      // use the EdgeCellContainer ID?
-
-      // add the edge linking two new border dual points
-      if( firstTime == true )
-        {
-        // BORDER CASE 1
-        firstTime = false;
-        }
-      else
-        {
-        myPrimalMesh->AddDualEdge( previousPointId, currentPointId );
-
-        // create a point ID list to hold the dual point IDs while iterating to create the dual cell
-        PointIdList pointidlist;
-        pointidlist.push_back( previousPointId );
-        QuadEdgeType *myEdge = currentEdge->GetOnext();
-        do
-          {
-          PointIdentifier myleftDualPointId =  myEdge->GetLeft().second;
-          pointidlist.push_back( myleftDualPointId );
-          myEdge = myEdge->GetOnext();
-          }
-        while( !myEdge->IsAtBorder() );
-
-        pointidlist.push_back( currentPointId );
-
-        // point list is complete, add the dual cell to the dual mesh;
-        myPrimalMesh->AddDualFace( pointidlist );
-
-        // NOTE ALEX: here we have to reset the OriginRefType
-        // loop around the onext, border or not
-        }
-      previousPointId = currentPointId;
-
-      // Update currentEdge
-      currentEdge = currentEdge->GetLnext();
-      }
-    while (currentEdge != firstEdge);
-
-    // border case 2 - WARNING DUPLICATE CODE
-    PointIdList pointidlist;
-    pointidlist.push_back( previousPointId );
-    QuadEdgeType *myEdge = currentEdge->GetOnext();
-    do
-      {
-      PointIdentifier myleftDualPointId =  myEdge->GetLeft().second;
-      pointidlist.push_back( myleftDualPointId );
-      myEdge = myEdge->GetOnext();
-      }
-    while( !myEdge->IsAtBorder() );
-
-    pointidlist.push_back( firstPointId );
-
-    // point list is complete, add the dual cell to the dual mesh;
-    myPrimalMesh->AddDualFace( pointidlist );
-
-    // NOTE ALEX: here we have to reset the OriginRefType
-    // loop around the onext, border or not
     }
 
   //-----------------------------------------------------
@@ -230,10 +148,9 @@ int main( int, char ** )
 
   return EXIT_SUCCESS;
 }
+//--------------------------------------------------------------------------------------------------
 
-
-
-
+//--------------------------------------------------------------------------------------------------
 template< typename MeshType >
 bool
 ComputeDualPointFromFaceAndSet(
@@ -300,7 +217,9 @@ ComputeDualPointFromFaceAndSet(
 
   return true;
 }
+//--------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------------
 template< typename MeshType >
 bool
 ComputeDualPointsForAllPolygons(
@@ -323,7 +242,9 @@ ComputeDualPointsForAllPolygons(
     }
   return true;
 }
+//--------------------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------------------------------------------
 template< typename MeshType >
 bool
 ComputeDualPolygonsForAllPoints(
@@ -392,6 +313,113 @@ ComputeDualPolygonsForAllPoints(
       }
 
     } // endof if( primalPoints )
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------
+template< typename MeshType >
+bool
+CreateDualCellOfBorderPoint(
+  MeshType*                          myPrimalMesh,
+  typename MeshType::PointIdentifier firstPointId,
+  typename MeshType::PointIdentifier previousPointId,
+  typename MeshType::QEType*         currentEdge
+  )
+{
+  typename MeshType::PointIdList pointidlist;
+  pointidlist.push_back( previousPointId );
+  typename MeshType::QEType *myEdge = currentEdge->GetOnext();
+  do
+    {
+    pointidlist.push_back( myEdge->GetLeft().second );
+    myEdge = myEdge->GetOnext();
+    }
+  while( !myEdge->IsAtBorder() );
+  pointidlist.push_back( firstPointId );
+
+  // point list is complete, add the dual cell to the dual mesh;
+  myPrimalMesh->AddDualFace( pointidlist );
+
+  // NOTE ALEX: TODO here we have to reset the OriginRefType
+  // loop around the onext, border or not
+
+  return true;
+}
+//--------------------------------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------
+template< typename MeshType >
+bool
+CreateDualOfBorderPointsAndEdges(
+  MeshType*                          myPrimalMesh,
+  typename MeshType::QEType*         currentEdge
+  )
+{
+  typedef typename MeshType::PointIdentifier     PointIdentifier;
+  typedef typename MeshType::QEType              QEType;
+  typedef typename MeshType::PointType           PointType;
+
+  QEType*         firstEdge    = currentEdge;
+  bool            firstTime    = true;
+  PointIdentifier firstPointId = myPrimalMesh->GetNumberOfDualPoints();
+  PointIdentifier previousPointId;
+  PointIdentifier currentPointId;
+  do
+    {
+    // 1. always create a new point in the middle of the edge
+
+    // this is a dual point. Cells are sampled in 2d, boundaries are sampled in 1D
+    PointIdentifier originPointId      = currentEdge->GetOrigin().first;
+    PointIdentifier destinationPointId = currentEdge->GetDestination().first;
+
+    // border primal points
+    PointType originPoint = myPrimalMesh->GetPoint( originPointId );
+    PointType destinationPoint = myPrimalMesh->GetPoint( destinationPointId );
+
+    PointType currentPoint;
+    // NOTE ALEX: TODO extract dimension from MeshTye
+    for( unsigned int k =0; k < 3; k++ ) // dimension; k++ )
+      {
+      currentPoint[k] = (originPoint[k] + destinationPoint[k]) / 2 ;
+      }
+    // add the new border dual point P1 to the dual point container
+    currentPointId = myPrimalMesh->AddDualPoint( currentPoint );
+
+    // 2. always add the edge between this (1D) point, and previous (2D) point
+
+    // add the dual edge P1-P2
+    // NOTE ALEX: do we know on which side the hole is. Is it stable?
+    myPrimalMesh->AddDualEdge( currentPointId, currentEdge->GetRight().second );
+
+    // 3. Almost always add the dual edge along the border,
+    // in which case we also create the dual cell.
+
+    // add the edge linking two new border dual points
+    if( firstTime == true )
+      {
+      firstTime = false;
+      }
+    else
+      {
+      // NOTE ALEX: how to deal with OriginRefType in this case?
+      // use the EdgeCellContainer ID?
+      myPrimalMesh->AddDualEdge( previousPointId, currentPointId );
+
+      CreateDualCellOfBorderPoint< MeshType >(
+        myPrimalMesh, currentPointId, previousPointId, currentEdge );
+      }
+    previousPointId = currentPointId;
+    currentEdge = currentEdge->GetLnext();
+    }
+  while( currentEdge != firstEdge );
+
+  // NOTE ALEX: are we missing a dual edge here?
+  CreateDualCellOfBorderPoint< MeshType >(
+    myPrimalMesh, firstPointId, previousPointId, currentEdge );
 
   return true;
 }

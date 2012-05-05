@@ -6,9 +6,56 @@
 #include "itkQuadEdgeMeshBoundaryEdgesMeshFunction.h"
 #include "itkQuadEdgeMeshPolygonCell.h"
 #include "itkQuadEdgeMeshEulerOperatorsTestHelper.h"
+#include "itkQuadEdgeMeshToQuadEdgeMeshFilter.h"
+
 
 #include <iostream>
 
+namespace itk
+{
+/**
+ * \class QuadEdgeMeshToQuadEdgeMeshWithDualFilter
+ * \brief TODO
+ * \ingroup ITKQuadEdgeMeshFiltering
+ */
+template< class TInputMesh, class TOutputMesh=TInputMesh >
+class ITK_EXPORT QuadEdgeMeshToQuadEdgeMeshWithDualFilter:
+  public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+{
+public:
+  typedef QuadEdgeMeshToQuadEdgeMeshWithDualFilter                    Self;
+  typedef SmartPointer< Self >                                        Pointer;
+  typedef SmartPointer< const Self >                                  ConstPointer;
+  typedef QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh > Superclass;
+
+  /** Run-time type information (and related methods).   */
+  itkTypeMacro(QuadEdgeMeshToQuadEdgeMeshWithDualFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
+
+  /** New macro for creation of through a Smart Pointer   */
+  itkNewMacro(Self);
+
+protected:
+  QuadEdgeMeshToQuadEdgeMeshWithDualFilter() {};
+
+  virtual ~QuadEdgeMeshToQuadEdgeMeshWithDualFilter() {};
+
+  void GenerateData()
+  {
+  // use the superclass method
+  this->CopyInputMeshToOutputMesh();
+  };
+
+  void PrintSelf(std::ostream & os, Indent indent) const
+  {
+    Superclass::PrintSelf(os, indent);
+    //os << indent << "AbsoluteTolerance2: " << m_AbsoluteTolerance2 << std::endl;
+  }
+
+private:
+  QuadEdgeMeshToQuadEdgeMeshWithDualFilter(const Self &);
+  void operator=(const Self &);
+};
+}
 
 template< typename MeshType >
 bool

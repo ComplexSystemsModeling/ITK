@@ -149,7 +149,7 @@ public:
 
       while( it != end )
         {
-        newPolygonCell->SetPointId( i, it.Value()->GetOrigin() );
+        newPolygonCell->SetPointId( i, it.Value()->GetOrigin().first );
         ++i;
         ++it;
         }
@@ -252,7 +252,7 @@ private:
 
     while( it != end )
       {
-      m_PointIds.push_back( it.Value()->GetOrigin() );
+      m_PointIds.push_back( it.Value()->GetOrigin().first );
       ++it;
       }
   }

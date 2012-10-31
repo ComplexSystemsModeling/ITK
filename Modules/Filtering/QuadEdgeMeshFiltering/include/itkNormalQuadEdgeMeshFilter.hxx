@@ -159,7 +159,7 @@ NormalQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
         OutputQEType *temp = edge;
         do
           {
-          pt[k] = output->GetPoint( temp->GetOrigin().first );
+          pt[k] = this->GetOutput()->GetPoint( temp->GetOrigin().first );
           if ( temp->GetOrigin().first == iPId )
             {
             internal_id = k;

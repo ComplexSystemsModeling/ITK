@@ -139,8 +139,8 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::Process(QEType *e
   bool wasLeftTriangle = e->IsLnextOfTriangle();
   bool wasRiteTriangle = e_sym->IsLnextOfTriangle();
 
-  PointIdentifier NewDest = e->GetDestination();
-  PointIdentifier NewOrg  = e->GetOrigin();
+  PointIdentifier NewDest = e->GetDestination().first;
+  PointIdentifier NewOrg  = e->GetOrigin().first;
   QEType *        leftZip = e->GetLnext();
   QEType *        riteZip = e->GetOprev();
 
@@ -194,7 +194,7 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::Process(QEType *e
     {
     typename Zip::Pointer zip = Zip::New();
     zip->SetInput(this->m_Mesh);
-    if ( QEType::m_NoPoint != zip->Evaluate(leftZip) )
+    if ( QEType::m_NoPoint != zip->Evaluate(leftZip).first )
       {
       itkDebugMacro("Zip must return NoPoint (left).");
       return ( (QEType *)0 );
@@ -208,13 +208,13 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::Process(QEType *e
       }
     }
 
-  // NewOrg = riteZip->GetOprev( )->GetDestination( );
+  // NewOrg = riteZip->GetOprev( )->GetDestination( ).first;
   if ( wasRiteTriangle )
     {
-    NewOrg = riteZip->GetDestination();
+    NewOrg = riteZip->GetDestination().first;
     typename Zip::Pointer zip = Zip::New();
     zip->SetInput(this->m_Mesh);
-    if ( QEType::m_NoPoint != zip->Evaluate(riteZip) )
+    if ( QEType::m_NoPoint != zip->Evaluate(riteZip).first )
       {
       itkDebugMacro("Zip must return NoPoint (right).");
       return ( (QEType *)0 );
@@ -222,7 +222,7 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::Process(QEType *e
     }
   else
     {
-    NewOrg = riteZip->GetLprev()->GetOrigin();
+    NewOrg = riteZip->GetLprev()->GetOrigin().first;
     if ( wasRiteFace )
       {
       this->m_Mesh->AddFace(riteZip);
@@ -245,7 +245,7 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::ProcessIsolatedQu
   QEType *temp = ( e->IsIsolated() == true ) ? e->GetSym() : e;
   QEType *rebuildEdge = temp->GetOprev();
 
-  m_OldPointID = temp->GetSym()->GetOrigin();
+  m_OldPointID = temp->GetSym()->GetOrigin().first;
 
   bool e_leftset = e->IsLeftSet();
   this->m_Mesh->LightWeightDeleteEdge(e);
@@ -270,8 +270,8 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::ProcessIsolatedFa
   std::stack< QEType * > &
   EdgesToBeDeleted)
 {
-  PointIdentifier org = e->GetOrigin();
-  PointIdentifier dest = e->GetDestination();
+  PointIdentifier org = e->GetOrigin().first;
+  PointIdentifier dest = e->GetDestination().first;
 
   // delete all elements
   while ( !EdgesToBeDeleted.empty() )
@@ -296,9 +296,11 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::ProcessIsolatedFa
 //--------------------------------------------------------------------------
 template< class TMesh, class TQEType >
 bool
-QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::IsFaceIsolated(QEType *e,
-                                                                              const bool & iWasLeftFace,
-                                                                              std::stack< TQEType * > & oToBeDeleted)
+QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >
+::IsFaceIsolated(
+  QEType *e,
+  const bool & iWasLeftFace,
+  std::stack< TQEType * > & oToBeDeleted)
 {
   bool    border;
   QEType *e_sym = e->GetSym();
@@ -456,7 +458,7 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::IsTetrahedron(QET
             CellIdentifier id_left_right_triangle;
             if ( e->GetLprev()->IsRightSet() )
               {
-              id_left_right_triangle = e->GetLprev()->GetRight();
+              id_left_right_triangle = e->GetLprev()->GetRight().first;
               }
             else
               {
@@ -466,7 +468,7 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::IsTetrahedron(QET
             CellIdentifier id_left_left_triangle;
             if ( e->GetLnext()->IsRightSet() )
               {
-              id_left_left_triangle = e->GetLnext()->GetRight();
+              id_left_left_triangle = e->GetLnext()->GetRight().first;
               }
             else
               {
@@ -476,7 +478,7 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::IsTetrahedron(QET
             CellIdentifier id_right_left_triangle;
             if ( e_sym->GetLnext()->IsRightSet() )
               {
-              id_right_left_triangle = e_sym->GetLnext()->GetRight();
+              id_right_left_triangle = e_sym->GetLnext()->GetRight().first;
               }
             else
               {
@@ -486,7 +488,7 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::IsTetrahedron(QET
             CellIdentifier id_right_right_triangle;
             if ( e_sym->GetLprev()->IsRightSet() )
               {
-              id_right_right_triangle = e_sym->GetLprev()->GetRight();
+              id_right_right_triangle = e_sym->GetLprev()->GetRight().first;
               }
             else
               {
@@ -543,7 +545,7 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::CommonVertexNeigh
   PointIdentifier id;
   do
     {
-    id = e_it->GetDestination();
+    id = e_it->GetDestination().first;
     dir_list.push_back(id);
     e_it = e_it->GetOnext();
     }
@@ -554,7 +556,7 @@ QuadEdgeMeshEulerOperatorJoinVertexFunction< TMesh, TQEType >::CommonVertexNeigh
 
   do
     {
-    id = e_it->GetDestination();
+    id = e_it->GetDestination().first;
     sym_list.push_back(id);
     e_it = e_it->GetOnext();
     }

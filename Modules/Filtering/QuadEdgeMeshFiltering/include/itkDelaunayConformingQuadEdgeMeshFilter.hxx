@@ -28,8 +28,8 @@ DelaunayConformingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 ::DelaunayConformingQuadEdgeMeshFilter()
 {
   this->m_NumberOfEdgeFlips = 0;
-  this->m_FlipEdge = FlipEdgeFunctionType::New();
-  this->m_PriorityQueue = PriorityQueueType::New();
+  this->m_FlipEdge          = FlipEdgeFunctionType::New();
+  this->m_PriorityQueue     = PriorityQueueType::New();
 }
 
 // ---------------------------------------------------------------------
@@ -153,8 +153,8 @@ void DelaunayConformingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::Process()
           value = Dyer07Criterion(output, e_it);
           if ( value > 0.0 )
             {
-            edge = output->FindEdgeCell( e_it->GetOrigin(),
-                                         e_it->GetDestination() );
+            edge = output->FindEdgeCell( e_it->GetOrigin().first,
+                                         e_it->GetDestination().first );
             QueueMapIterator queue_it = m_QueueMapper.find(edge);
             if ( queue_it == m_QueueMapper.end() )
               {

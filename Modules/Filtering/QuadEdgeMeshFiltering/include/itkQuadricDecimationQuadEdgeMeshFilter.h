@@ -99,9 +99,9 @@ protected:
   {
     OutputPointIdentifier id[3];
 
-    id[0] = iEdge->GetOrigin();
-    id[1] = iEdge->GetDestination();
-    id[2] = iEdge->GetOnext()->GetDestination();
+    id[0] = iEdge->GetOrigin().first;
+    id[1] = iEdge->GetDestination().first;
+    id[2] = iEdge->GetOnext()->GetDestination().first;
 
     OutputPointType p[3];
 
@@ -119,8 +119,8 @@ protected:
    */
   inline MeasureType MeasureEdge(OutputQEType *iEdge)
   {
-    OutputPointIdentifier id_org = iEdge->GetOrigin();
-    OutputPointIdentifier id_dest = iEdge->GetDestination();
+    OutputPointIdentifier id_org = iEdge->GetOrigin().first;
+    OutputPointIdentifier id_dest = iEdge->GetDestination().first;
     QuadricElementType    Q = m_Quadric[id_org] + m_Quadric[id_dest];
 
     OutputPointType org = this->m_OutputMesh->GetPoint(id_org);

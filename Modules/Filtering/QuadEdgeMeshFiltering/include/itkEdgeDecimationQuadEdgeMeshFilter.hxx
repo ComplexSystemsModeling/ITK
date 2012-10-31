@@ -80,8 +80,8 @@ template< class TInput, class TOutput, class TCriterion >
 void
 EdgeDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >::PushElement(OutputQEType *iEdge)
 {
-  OutputPointIdentifier id_org = iEdge->GetOrigin();
-  OutputPointIdentifier id_dest = iEdge->GetDestination();
+  OutputPointIdentifier id_org = iEdge->GetOrigin().first;
+  OutputPointIdentifier id_dest = iEdge->GetDestination().first;
 
   OutputQEType *temp = ( id_org < id_dest ) ? iEdge : iEdge->GetSym();
   MeasureType   measure = MeasureEdge(temp);
@@ -109,7 +109,7 @@ IsEdgeOKToBeProcessed(OutputQEType *)
     return false;
     }
 
-  OutputPointIdentifier id_org = iEdge->GetOrigin();
+  OutputPointIdentifier id_org = iEdge->GetOrigin().first;
   if ( id_org == iEdge->m_NoPoint )
     {
     itkDebugMacro("id_org == iEdge->m_NoPoint, at iteration: "
@@ -131,7 +131,7 @@ IsEdgeOKToBeProcessed(OutputQEType *)
     return false;
     }
 
-  OutputPointIdentifier id_dest = iEdge->GetDestination();
+  OutputPointIdentifier id_dest = iEdge->GetDestination().first;
   if ( id_dest == iEdge->m_NoPoint )
     {
     itkDebugMacro("id_dest == iEdge->m_NoPoint, at iteration: "
@@ -180,7 +180,7 @@ EdgeDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >::DeleteElement(O
 {
   if ( iEdge ) // this test can be removed
     {
-    OutputQEType *temp = ( iEdge->GetOrigin() < iEdge->GetDestination() ) ?
+    OutputQEType *temp = ( iEdge->GetOrigin().first < iEdge->GetDestination().first ) ?
                          iEdge : iEdge->GetSym();
 
     QueueMapIterator map_it = m_QueueMapper.find(temp);
@@ -203,7 +203,7 @@ EdgeDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >::PushOrUpdateEle
 {
   OutputQEType *temp = iEdge;
 
-  if ( temp->GetOrigin() > temp->GetDestination() )
+  if ( temp->GetOrigin().first > temp->GetDestination().first )
     {
     temp = temp->GetSym();
     }
@@ -249,8 +249,8 @@ EdgeDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >::JoinVertexFaile
     case OperatorType::TOO_MANY_COMMON_VERTICES:
       itkDebugMacro("TOO_MANY_COMMON_VERTICES, at iteration "
                     << this->m_Iteration);
-      itkDebugMacro( << m_Element->GetOrigin() << " -> "
-                     << m_Element->GetDestination() );
+      itkDebugMacro( << m_Element->GetOrigin().first << " -> "
+                     << m_Element->GetDestination().first );
       this->TagElementOut(m_Element);
       break;
     // ******************************************************************
@@ -303,8 +303,8 @@ EdgeDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >::ProcessWithoutA
 {
   OutputPointType   pt;
 
-  OutputPointIdentifier id_org = m_Element->GetOrigin();
-  OutputPointIdentifier id_dest = m_Element->GetDestination();
+  OutputPointIdentifier id_org = m_Element->GetOrigin().first;
+  OutputPointIdentifier id_dest = m_Element->GetDestination().first;
   OutputPointIdentifier idx = ( id_org < id_dest ) ? id_org : id_dest;
 
   bool to_be_processed(true);
@@ -507,7 +507,7 @@ EdgeDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >::NumberOfCommonV
   std::list< OutputPointIdentifier > dir_list, sym_list, intersection_list;
   do
     {
-    dir_list.push_back( e_it->GetDestination() );
+    dir_list.push_back( e_it->GetDestination().first );
     e_it = e_it->GetOnext();
     }
   while ( e_it != qe );
@@ -517,7 +517,7 @@ EdgeDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >::NumberOfCommonV
 
   do
     {
-    sym_list.push_back( e_it->GetDestination() );
+    sym_list.push_back( e_it->GetDestination().first );
     e_it = e_it->GetOnext();
     }
   while ( e_it != qe );
@@ -576,7 +576,7 @@ EdgeDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >::RemoveEye()
     qe = qe_sym;
     }
 
-  TagElementOut(qe);
+  TagElementOut( qe );
   TagElementOut( qe->GetOnext() );
   TagElementOut( qe->GetSym()->GetOnext() );
   TagElementOut( qe->GetSym()->GetOprev() );

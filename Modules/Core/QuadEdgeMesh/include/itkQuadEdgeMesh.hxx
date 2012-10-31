@@ -171,7 +171,7 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
     ////////// Handle the geometrical references:
     // Make sure the Origin's edge entry doesn't point to an entry edge
     // that isn't any more in the Onext ring:
-    PointIdentifier orgId = a->GetOrigin();
+    PointIdentifier orgId = a->GetOrigin().first;
     PointType       org = this->GetPoint(orgId);
     org.SetEdge(a);
     this->SetPoint(orgId, org);
@@ -185,7 +185,7 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
     typename QEPrimal::IteratorGeom it;
     for ( it = b->BeginGeomOnext(); it != b->EndGeomOnext(); it++ )
       {
-      it.Value()->SetOrigin(newOriginId);
+      it.Value()->SetOrigin( VertexRefType(newOriginId, 0) );
       }
     resultingOriginId = newOriginId;
     }
@@ -241,8 +241,8 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
 
     /////////////////////////////////////////////////////////////
     // First, consider the vertices: Origin and oldOrigin must be different.
-    PointIdentifier oldOriginId = b->GetOrigin();
-    PointIdentifier orgId = a->GetOrigin();
+    PointIdentifier oldOriginId = b->GetOrigin().first;
+    PointIdentifier orgId = a->GetOrigin().first;
 
     if ( oldOriginId == orgId )
       {
@@ -293,14 +293,14 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
     FaceRefType bLeftFace = b->GetLeft();
 
     bool MustReconstructFace = false;
-    if ( ( aLeftFace == m_NoFace && bLeftFace != m_NoFace )
-         || ( aLeftFace != m_NoFace && bLeftFace == m_NoFace ) )
+    if ( ( aLeftFace.first == m_NoFace && bLeftFace.first != m_NoFace )
+         || ( aLeftFace.first != m_NoFace && bLeftFace.first == m_NoFace ) )
       {
       itkDebugMacro("Face on one side but not the other. Cancel.");
       return ( m_NoPoint );
       }
 
-    if ( aLeftFace != m_NoFace && bLeftFace != m_NoFace )
+    if ( aLeftFace.first != m_NoFace && bLeftFace.first != m_NoFace )
       {
       if ( ( aLeftFace == bLeftFace )
            && ( a->GetLnext() != b )
@@ -340,7 +340,7 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
     typename QEPrimal::IteratorGeom it;
     for ( it = a->BeginGeomOnext(); it != a->EndGeomOnext(); it++ )
       {
-      it.Value()->SetOrigin(orgId);
+      it.Value()->SetOrigin( VertexRefType( orgId, 0 ) );
       }
     resultingOriginId = oldOriginId;
 
@@ -376,8 +376,8 @@ void QuadEdgeMesh< TPixel, VDimension, TTraits >
   if ( ( qe = dynamic_cast< EdgeCellType * >( cell.GetPointer() ) ) )
     {
     // NOTE ALEX: here
-    this->AddEdge( qe->GetQEGeom()->GetOrigin(),
-                   qe->GetQEGeom()->GetDestination() );
+    this->AddEdge( qe->GetQEGeom()->GetOrigin().first,
+                   qe->GetQEGeom()->GetDestination().first );
     cell.ReleaseOwnership();
     delete qe;
     }
@@ -387,7 +387,7 @@ void QuadEdgeMesh< TPixel, VDimension, TTraits >
     PointIdInternalIterator pit = pe->InternalPointIdsBegin();
     while ( pit != pe->InternalPointIdsEnd() )
       {
-      points.push_back(*pit);
+      points.push_back((*pit).first);
       pit++;
       }
     // NOTE ALEX: here
@@ -535,7 +535,7 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
       EdgeRingIter  = EdgeRingEntry;
       do
         {
-        EdgeRingIter->SetOrigin( FilledPointID );
+        EdgeRingIter->SetOrigin( VertexRefType( FilledPointID, 0 ) );
         EdgeRingIter = EdgeRingIter->GetOnext( );
         }
       while( EdgeRingIter != EdgeRingEntry );
@@ -727,12 +727,15 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
   EdgeCellType *newEdge = new EdgeCellType();
   QEPrimal *    newEdgeGeom = newEdge->GetQEGeom();
 
-  newEdgeGeom->SetOrigin (orgPid);
-  newEdgeGeom->SetDestination(destPid);
+  VertexRefType OriginRef = VertexRefType(  orgPid,  0 );
+  FaceRefType DestinationRef = FaceRefType( destPid, 0 );
+
+  newEdgeGeom->SetOrigin( OriginRef );
+  newEdgeGeom->SetDestination( DestinationRef );
 
   if ( !eOrigin )
     {
-    PointType pOrigin = this->GetPoint(orgPid);
+    PointType pOrigin = this->GetPoint( orgPid );
     pOrigin.SetEdge(newEdgeGeom);
     this->SetPoint(orgPid, pOrigin);
     }
@@ -807,8 +810,8 @@ void
 QuadEdgeMesh< TPixel, VDimension, TTraits >
 ::DeleteEdge(QEPrimal *e)
 {
-  const PointIdentifier & orgPid  = e->GetOrigin();
-  const PointIdentifier & destPid = e->GetDestination();
+  const PointIdentifier & orgPid  = e->GetOrigin().first;
+  const PointIdentifier & destPid = e->GetDestination().first;
 
   // Check if the Origin point's edge ring entry should be changed
   PointType pOrigin = this->GetPoint(orgPid);
@@ -948,8 +951,8 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
     {
     return;
     }
-  const PointIdentifier & orgPid  = e->GetOrigin();
-  const PointIdentifier & destPid = e->GetDestination();
+  const PointIdentifier & orgPid  = e->GetOrigin().first;
+  const PointIdentifier & destPid = e->GetDestination().first;
   if ( orgPid != e->m_NoPoint &&  destPid != e->m_NoPoint )
     {
     // ------------------------------------------------------------------
@@ -1032,14 +1035,14 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
     {
     return;
     }
-  const PointIdentifier & orgPid  = e->GetOrigin();
+  const PointIdentifier & orgPid  = e->GetOrigin().first;
   if ( orgPid == e->m_NoPoint )
     {
     // org not set
     return;
     }
 
-  const PointIdentifier & destPid = e->GetDestination();
+  const PointIdentifier & destPid = e->GetDestination().first;
   if ( destPid == e->m_NoPoint )
     {
     // dest not set
@@ -1066,14 +1069,14 @@ void
 QuadEdgeMesh< TPixel, VDimension, TTraits >
 ::DeleteFace(FaceRefType faceToDelete)
 {
-  if ( !this->GetCells()->IndexExists(faceToDelete) )
+  if ( !this->GetCells()->IndexExists( faceToDelete.first ) )
     {
     itkDebugMacro("No such face in container");
     return;
     }
 
   PolygonCellType *cellToDelete = dynamic_cast< PolygonCellType * >
-                                  ( this->GetCells()->GetElement(faceToDelete) );
+                                  ( this->GetCells()->GetElement( faceToDelete.first ) );
   if ( !cellToDelete )
     {
     itkDebugMacro("This Id does not correspond to a face (should be an edge)");
@@ -1102,7 +1105,7 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
     it.Value()->UnsetLeft();
     }
 
-  this->GetCells()->DeleteIndex(faceToDelete);
+  this->GetCells()->DeleteIndex(faceToDelete.first);
   delete cellToDelete;
 
   --m_NumberOfFaces;
@@ -1174,7 +1177,7 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
     typename QEPrimal::IteratorGeom end = initialEdge->EndGeomOnext();
     while ( it != end )
       {
-      if ( it.Value()->GetDestination() == pid1 )
+      if (  it.Value()->GetDestination().first == pid1 )
         {
         return ( dynamic_cast< QEPrimal * >( it.Value() ) );
         }
@@ -1363,9 +1366,10 @@ QuadEdgeMesh< TPixel, VDimension, TTraits >
   // of the new face [ i.e. use the itk level CellIdentifier as the
   // GeometricalQuadEdge::m_Origin of dual edges (edges of type QEDual) ].
   typename QEPrimal::IteratorGeom it;
+  FaceRefType temp = FaceRefType( fid, 0 );
   for ( it = entry->BeginGeomLnext(); it != entry->EndGeomLnext(); it++ )
     {
-    it.Value()->SetLeft(fid);
+    it.Value()->SetLeft(temp);
     }
 
   ++m_NumberOfFaces;
@@ -1438,8 +1442,8 @@ typename QuadEdgeMesh< TPixel, VDimension, TTraits >::CoordRepType
 QuadEdgeMesh< TPixel, VDimension, TTraits >
 ::ComputeEdgeLength(QEPrimal *e)
 {
-  const PointType org  = this->GetPoint( e->GetOrigin() );
-  const PointType dest = this->GetPoint( e->GetDestination() );
+  const PointType org  = this->GetPoint( e->GetOrigin().first );
+  const PointType dest = this->GetPoint( e->GetDestination().first );
 
   const CoordRepType length = org.EuclideanDistanceTo(dest);
 

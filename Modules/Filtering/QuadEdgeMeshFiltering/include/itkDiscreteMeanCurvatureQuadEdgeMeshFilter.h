@@ -113,8 +113,8 @@ protected:
         do
           {
           qe_it2 = qe_it->GetOnext();
-          q0 = output->GetPoint( qe_it->GetDestination() );
-          q1 = output->GetPoint( qe_it2->GetDestination() );
+          q0 = output->GetPoint( qe_it->GetDestination().first );
+          q1 = output->GetPoint( qe_it2->GetDestination().first );
 
           temp_coeff = coefficent(output, qe_it);
           Laplace += temp_coeff * ( iP - q0 );

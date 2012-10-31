@@ -115,7 +115,7 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
       {
       if( qe_it )
         {
-        OutputPointIdentifierType neigh_id = qe_it->GetDestination();
+        OutputPointIdentifierType neigh_id = qe_it->GetDestination().first;
 
         const char label = this->GetLabelValueForGivenNode( neigh_id );
 
@@ -172,10 +172,10 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
 
       if( qe_it2 )
         {
-        if( qe_it->GetLeft() != OutputMeshType::m_NoFace )
+        if( qe_it->GetLeft().first != OutputMeshType::m_NoFace )
           {
-          OutputPointIdentifierType id1 = qe_it->GetDestination();
-          OutputPointIdentifierType id2 = qe_it2->GetDestination();
+          OutputPointIdentifierType id1 = qe_it->GetDestination().first;
+          OutputPointIdentifierType id2 = qe_it2->GetDestination().first;
 
           const LabelType label1 =
               static_cast< LabelType >( this->GetLabelValueForGivenNode( id1 ) );
@@ -493,10 +493,10 @@ FastMarchingQuadEdgeMeshFilterBase< TInput, TOutput >
   OutputPointType t_pt = t_pt1;
 
   unsigned int nNum = 0;
-  while( nNum<50 && qe->GetLeft() != OutputMeshType::m_NoFace )
+  while( nNum<50 && qe->GetLeft().first != OutputMeshType::m_NoFace )
     {
     OutputQEType* qe_Lnext = qe->GetLnext();
-    OutputPointIdentifierType t_id = qe_Lnext->GetDestination();
+    OutputPointIdentifierType t_id = qe_Lnext->GetDestination().first;
 
     oMesh->GetPoint( t_id, &t_pt );
 

@@ -44,7 +44,7 @@ QuadEdgeMeshEulerOperatorSplitVertexFunction< TMesh, TQEType >::Evaluate(QEType 
     return ( (QEType *)0 );
     }
 
-  if ( h->GetDestination() != g->GetDestination() )
+  if ( h->GetDestination().first != g->GetDestination().first )
     {
     itkDebugMacro("The two half-edges must be incident to the same vertex.");
     return ( (QEType *)0 );
@@ -58,8 +58,8 @@ QuadEdgeMeshEulerOperatorSplitVertexFunction< TMesh, TQEType >::Evaluate(QEType 
   this->m_NewPoint = this->m_Mesh->Splice( h->GetSym(), g->GetSym() );
 
   // then add a new edge
-  QEType *ReturnedEdge = this->m_Mesh->AddEdge( g->GetDestination(),
-                                                h->GetDestination() );
+  QEType *ReturnedEdge = this->m_Mesh->AddEdge( g->GetDestination().first,
+                                                h->GetDestination().first );
 
   // Build two new faces
   this->m_Mesh->AddFace( h->GetSym() );

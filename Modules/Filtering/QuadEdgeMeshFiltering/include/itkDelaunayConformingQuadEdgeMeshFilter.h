@@ -143,11 +143,11 @@ protected:
   inline CriterionValueType
   Dyer07Criterion(OutputMeshType *iMesh, OutputQEType *iEdge) const
   {
-    OutputPointIdentifier id1 = iEdge->GetOrigin();
-    OutputPointIdentifier id2 = iEdge->GetDestination();
+    OutputPointIdentifier id1 = iEdge->GetOrigin().first;
+    OutputPointIdentifier id2 = iEdge->GetDestination().first;
 
-    OutputPointIdentifier idA = iEdge->GetLnext()->GetDestination();
-    OutputPointIdentifier idB = iEdge->GetRnext()->GetOrigin();
+    OutputPointIdentifier idA = iEdge->GetLnext()->GetDestination().first;
+    OutputPointIdentifier idB = iEdge->GetRnext()->GetOrigin().first;
 
     OutputPointType pt1 = iMesh->GetPoint(id1);
     OutputPointType pt2 = iMesh->GetPoint(id2);

@@ -23,7 +23,10 @@
 class itkQuadEdgeMeshBasicLayerTestHelper
 {
 public:
-  typedef itk::GeometricalQuadEdge< int, int, bool, bool >  PrimalType;
+  typedef itk::GeometricalQuadEdge<
+    std::pair< int, int >,
+    std::pair< int, int >,
+    bool, bool >  PrimalType;
   typedef PrimalType::DualType                              DualType;
 
   static PrimalType * MakeQuadEdges()
@@ -51,6 +54,8 @@ int itkQuadEdgeMeshBasicLayerTest( int , char* [] )
 {
   typedef itkQuadEdgeMeshBasicLayerTestHelper::PrimalType  PrimalType;
   typedef itkQuadEdgeMeshBasicLayerTestHelper::DualType    DualType;
+  typedef PrimalType::OriginRefType                        VertexRefType;
+  typedef DualType::OriginRefType                          FaceRefType;
 
   PrimalType* e[5];
 
@@ -91,8 +96,8 @@ int itkQuadEdgeMeshBasicLayerTest( int , char* [] )
 
   for(int i=0; i < 5; i++ )
     {
-    e[i]->SetOrigin( org[i] );
-    e[i]->SetDestination( dest[i] );
+    e[i]->SetOrigin( VertexRefType( org[i], 0 ) );
+    e[i]->SetDestination( VertexRefType( dest[i], 0 ) );
     }
   std::cout << "Passed" << std::endl;
 
@@ -124,21 +129,21 @@ int itkQuadEdgeMeshBasicLayerTest( int , char* [] )
              << std::endl;
   for( int i=0; i < 5; i++ )
     {
-    if ( e[i]->GetOrigin() != org[i] )
+    if ( e[i]->GetOrigin().first != org[i] )
       {
       std::cout << std::endl
                 << "Erroneous GetOrigin() on edge number " << i
                 << ". Was expecting " << org[i]
-                << " but got " << e[i]->GetOrigin()
+                << " but got " << e[i]->GetOrigin().first
                 << ". Failed" << std::endl;
       return EXIT_FAILURE;
       } //fi
-    if ( e[i]->GetDestination() != dest[i] )
+    if ( e[i]->GetDestination().first != dest[i] )
       {
       std::cout << std::endl
                 << "Erroneous GetDestination() on edge number " << i
                 << ". Was expecting " << dest[i]
-                << " but got " << e[i]->GetDestination()
+                << " but got " << e[i]->GetDestination().first
                 << ". Failed" << std::endl;
       return EXIT_FAILURE;
       } //fi
@@ -147,12 +152,12 @@ int itkQuadEdgeMeshBasicLayerTest( int , char* [] )
 
   //////////////////////////////////////////////////////////
   std::cout  << "Setting faces... " << std::endl;
-  e[0]->SetLeft( 0 );
-  e[1]->SetLeft( 0 );
-  e[4]->SetRight( 0 );
-  e[2]->SetLeft( 1 );
-  e[3]->SetLeft( 1 );
-  e[4]->SetLeft( 1 );
+  e[0]->SetLeft(  FaceRefType( 0, 0 ) );
+  e[1]->SetLeft(  FaceRefType( 0, 0 ) );
+  e[4]->SetRight( FaceRefType( 0, 0 ) );
+  e[2]->SetLeft(  FaceRefType( 1, 0 ) );
+  e[3]->SetLeft(  FaceRefType( 1, 0 ) );
+  e[4]->SetLeft(  FaceRefType( 1, 0 ) );
   std::cout << "Passed" << std::endl;
 
   //////////////////////////////////////////////////////////
@@ -170,12 +175,12 @@ int itkQuadEdgeMeshBasicLayerTest( int , char* [] )
          itOnext != e[edge]->EndGeomOnext( );
          itOnext++, test++ )
       {
-      if ( itOnext.Value( )->GetDestination( ) != onextDestination[edge][test] )
+      if ( itOnext.Value( )->GetDestination( ).first != onextDestination[edge][test] )
         {
         std::cout << std::endl
                   << "Erroneous GetDestination() on edge number " << edge
                   << ". Was expecting " << onextDestination[edge][test]
-                  << " but got " << itOnext.Value( )->GetDestination( )
+                  << " but got " << itOnext.Value( )->GetDestination( ).first
                   << ". Failed" << std::endl;
         return EXIT_FAILURE;
         }
@@ -197,12 +202,12 @@ int itkQuadEdgeMeshBasicLayerTest( int , char* [] )
          itLnext != e[edge]->EndGeomLnext( );
          itLnext++, test++ )
       {
-      if ( *itLnext != lnextDestination[edge][test] )
+      if ( (*itLnext).first != lnextDestination[edge][test] )
         {
         std::cout << std::endl
                   << "Erroneous GetDestination() on edge number " << edge
                   << ". Was expecting " << lnextDestination[edge][test]
-                  << " but got " << *itLnext
+                  << " but got " << (*itLnext).first
                   << ". Failed" << std::endl;
         return EXIT_FAILURE;
         }
@@ -216,12 +221,12 @@ int itkQuadEdgeMeshBasicLayerTest( int , char* [] )
        itLnext != e[4]->GetSym()->EndGeomLnext( );
        itLnext++, test++ )
     {
-    if ( *itLnext != lnextDestinationOnSym[test] )
+    if ( (*itLnext).first != lnextDestinationOnSym[test] )
       {
       std::cout << std::endl
                 << "Erroneous GetDestination() on edge number 4. "
                 << "Was expecting " << lnextDestinationOnSym[test]
-                << " but got " << *itLnext
+                << " but got " << (*itLnext).first
                 << ". Failed" << std::endl;
       return EXIT_FAILURE;
       }
@@ -243,12 +248,12 @@ int itkQuadEdgeMeshBasicLayerTest( int , char* [] )
          itSym != e[edge]->EndGeomSym( );
          itSym++, test++ )
       {
-      if ( *itSym != symDestination[edge][test] )
+      if ( (*itSym).first != symDestination[edge][test] )
         {
         std::cout << std::endl
                   << "Erroneous GetDestination() on edge number " << edge
                   << ". Was expecting " << symDestination[edge][test]
-                  << " but got " << *itSym
+                  << " but got " << (*itSym).first
                   << ". Failed" << std::endl;
         return EXIT_FAILURE;
         }

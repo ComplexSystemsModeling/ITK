@@ -28,9 +28,9 @@ namespace itk
 template< typename TVRef, typename TFRef,
           typename TPrimalData, typename TDualData, bool PrimalDual >
 const typename GeometricalQuadEdge< TVRef, TFRef,
-                                    TPrimalData, TDualData, PrimalDual >::OriginRefType
+                                    TPrimalData, TDualData, PrimalDual >::LineCellIdentifier
 GeometricalQuadEdge< TVRef, TFRef, TPrimalData, TDualData, PrimalDual >::m_NoPoint =
-  vcl_numeric_limits< OriginRefType >::max();
+  vcl_numeric_limits< LineCellIdentifier>::max();
 
 /**
  *   Constructor
@@ -40,7 +40,8 @@ template< typename TVRef, typename TFRef,
 GeometricalQuadEdge< TVRef, TFRef, TPrimalData, TDualData, PrimalDual >
 ::GeometricalQuadEdge()
 {
-  this->m_Origin     = m_NoPoint;
+  this->m_Origin.first  = m_NoPoint;
+  this->m_Origin.second = m_NoPoint;
   this->m_DataSet = false;
 }
 
@@ -651,7 +652,7 @@ bool
 GeometricalQuadEdge< TVRef, TFRef, TPrimalData, TDualData, PrimalDual >
 ::IsOriginSet() const
 {
-  return ( this->m_Origin != m_NoPoint );
+  return ( this->m_Origin.first != m_NoPoint );
 }
 
 // ---------------------------------------------------------------------

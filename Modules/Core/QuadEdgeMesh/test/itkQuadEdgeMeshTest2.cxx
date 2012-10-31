@@ -88,7 +88,7 @@ int itkQuadEdgeMeshTest2( int , char* [] )
     QuadEdgeType::IteratorGeom git = QEGeom->BeginGeomLnext();
     while( git != QEGeom->EndGeomLnext() )
       {
-      if( ids[ itIds ] != *git )
+      if( ids[ itIds ] != (*git).first )
         {
         std::cout << "Problem with splicing edges." << std::endl;
         return EXIT_FAILURE;

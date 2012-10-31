@@ -80,8 +80,8 @@ protected:
    */
   inline MeasureType MeasureEdge(OutputQEType *iEdge)
   {
-    OutputPointIdentifier id_org = iEdge->GetOrigin();
-    OutputPointIdentifier id_dest = iEdge->GetDestination();
+    OutputPointIdentifier id_org = iEdge->GetOrigin().first;
+    OutputPointIdentifier id_dest = iEdge->GetDestination().first;
 
     OutputPointType org = this->m_OutputMesh->GetPoint(id_org);
     OutputPointType dest = this->m_OutputMesh->GetPoint(id_dest);

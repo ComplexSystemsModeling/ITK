@@ -29,13 +29,13 @@ QuadEdgeMeshZipMeshFunction< TMesh, TQEType >::Evaluate(QEType *e)
   if ( !this->m_Mesh )
     {
     itkDebugMacro("No mesh present.");
-    return ( QEType::m_NoPoint );
+    return( OutputType( QEType::m_NoPoint, 0 ) );
     }
 
   if ( e->IsLeftSet() )
     {
     itkDebugMacro("Incoming edge must be adjacent to NOFACE.");
-    return ( QEType::m_NoPoint );
+    return( OutputType( QEType::m_NoPoint, 0 ) );
     }
 
   //     Initial state                          Final state        //
@@ -81,7 +81,7 @@ QuadEdgeMeshZipMeshFunction< TMesh, TQEType >::Evaluate(QEType *e)
   OutputType VLeft = e->GetDestination();
   OutputType VRite = b->GetOrigin();
   bool       wasFacePresent = e->IsRightSet();
-  OutputType resultingPointId = QEType::m_NoPoint;
+  OutputType resultingPointId = OutputType( QEType::m_NoPoint, 0 );
 
   // We should be cautious and consider the case when the very
   // initial situation was the following:
@@ -196,7 +196,7 @@ QuadEdgeMeshZipMeshFunction< TMesh, TQEType >::Evaluate(QEType *e)
     //                   / | \                             //
     //                  /  |  \                            //
     //
-    resultingPointId = this->m_Mesh->Splice(a, b);
+    resultingPointId = OutputType( this->m_Mesh->Splice(a, b), 0 );
     }
 
   // We restore the deleted face (when it was present):

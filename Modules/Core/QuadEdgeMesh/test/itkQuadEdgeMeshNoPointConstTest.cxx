@@ -23,7 +23,7 @@ int itkQuadEdgeMeshNoPointConstTest( int , char* [] )
 {
   typedef itk::QuadEdgeMesh< double, 3 >     MeshType;
   typedef MeshType::QEType                   QEType;
-  typedef QEType::OriginRefType              OriginRefType;
+  typedef QEType::OriginRefType::first_type  OriginRefType;
 
   OriginRefType VCL_LIMIT = vcl_numeric_limits< OriginRefType >::max( );
   OriginRefType GQE_LIMIT = QEType::m_NoPoint;

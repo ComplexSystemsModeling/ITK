@@ -190,9 +190,12 @@ QuadEdgeMeshPolygonCell< TCellInterface >
 
     while ( i1 != end )
       {
-      i1.Value()->SetOrigin(*i2);
-      ++i1;
-      ++i2;
+      VertexRefType temp;
+      temp.first  = *i2;
+      temp.second = 0; // NOTE ALEX: should be m_NoPoint
+      i1.Value()->SetOrigin( temp );
+      i1++;
+      i2++;
       }
     }
 }
@@ -211,9 +214,9 @@ QuadEdgeMeshPolygonCell< TCellInterface >
 
     while ( i1 != end )
       {
-      i1.Value()->SetOrigin(*i2);
-      ++i1;
-      ++i2;
+      i1.Value()->SetOrigin( *i2 );
+      i1++;
+      i2++;
       }
     }
 }
@@ -230,9 +233,12 @@ void QuadEdgeMeshPolygonCell< TCellInterface >
 
   while ( i1 != end && i2 != last )
     {
-    i1.Value()->SetOrigin(*i2);
-    ++i1;
-    ++i2;
+    VertexRefType temp;
+    temp.first  = *i2;
+    temp.second = 0; // NOTE ALEX: should be m_NoPoint
+    i1.Value()->SetOrigin( temp );
+    i1++;
+    i2++;
     }
 }
 
@@ -248,9 +254,9 @@ void QuadEdgeMeshPolygonCell< TCellInterface >
 
   while ( i1 != end && i2 != last )
     {
-    i1.Value()->SetOrigin(*i2);
-    ++i1;
-    ++i2;
+    i1.Value()->SetOrigin( *i2 );
+    i1++;
+    i2++;
     }
 }
 
@@ -267,8 +273,11 @@ void QuadEdgeMeshPolygonCell< TCellInterface >
     {
     if ( n == localId )
       {
-      it.Value()->SetOrigin(pId);
-      it.Value()->GetOnext()->SetOrigin(pId);
+      VertexRefType temp;
+      temp.first  = pId;
+      temp.second = 0; // NOTE ALEX: should be m_NoPoint
+      it.Value()->SetOrigin(temp);
+      it.Value()->GetOnext()->SetOrigin(temp);
       }
     ++it;
     ++n;
@@ -288,7 +297,7 @@ QuadEdgeMeshPolygonCell< TCellInterface >
     {
     if ( n == localId )
       {
-      return ( it.Value()->GetOrigin() );
+      return ( it.Value()->GetOrigin().first );
       }
     it++;
     n++;

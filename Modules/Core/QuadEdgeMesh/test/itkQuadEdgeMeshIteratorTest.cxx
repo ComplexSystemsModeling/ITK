@@ -111,12 +111,12 @@ int itkQuadEdgeMeshIteratorTest( int , char* [] )
       {
       std::cout << std::endl
                 << "Erroneous edge: was expecting ["
-                << expectedEdge->GetOrigin( )
+                << expectedEdge->GetOrigin( ).first
                 << ", "
-                << expectedEdge->GetDestination( )
+                << expectedEdge->GetDestination( ).first
                 << "], but got ["
-                << currentEdge->GetOrigin( ) << ", "
-                << currentEdge->GetDestination( ) << "]. Failed."
+                << currentEdge->GetOrigin( ).first << ", "
+                << currentEdge->GetDestination( ).first << "]. Failed."
                 << std::endl;
       return EXIT_FAILURE;
       }
@@ -137,12 +137,12 @@ int itkQuadEdgeMeshIteratorTest( int , char* [] )
       {
       std::cout << std::endl
                 << "Erroneous edge: was expecting ["
-                << expectedEdge->GetOrigin( )
+                << expectedEdge->GetOrigin( ).first
                 << ", "
-                << expectedEdge->GetDestination( )
+                << expectedEdge->GetDestination( ).first
                 << "], but got ["
-                << currentEdge->GetOrigin( ) << ", "
-                << currentEdge->GetDestination( ) << "]. Failed."
+                << currentEdge->GetOrigin( ).first << ", "
+                << currentEdge->GetDestination( ).first << "]. Failed."
                 << std::endl;
       return EXIT_FAILURE;
       }
@@ -172,12 +172,12 @@ int itkQuadEdgeMeshIteratorTest( int , char* [] )
       {
       std::cout << std::endl
                 << "Erroneous edge: was expecting ["
-                << expectedEdge->GetOrigin( )
+                << expectedEdge->GetOrigin( ).first
                 << ", "
-                << expectedEdge->GetDestination( )
+                << expectedEdge->GetDestination( ).first
                 << "], but got ["
-                << currentEdge->GetOrigin( ) << ", "
-                << currentEdge->GetDestination( ) << "]. Failed."
+                << currentEdge->GetOrigin( ) .first << ", "
+                << currentEdge->GetDestination( ).first << "]. Failed."
                 << std::endl;
       return EXIT_FAILURE;
       }

@@ -192,7 +192,7 @@ template<class TCell> int TestQECellInterface(std::string name, TCell *aCell)
     = cell->InternalPointIdsEnd();
   while (pointId != endId)
     {
-    std::cout << *pointId << ", ";
+    std::cout << (*pointId).first << ", ";
     pointId++;
     }
   std::cout << std::endl;
@@ -205,7 +205,7 @@ template<class TCell> int TestQECellInterface(std::string name, TCell *aCell)
 
   while (cpointId != cendId)
     {
-    std::cout << *cpointId << ", ";
+    std::cout << (*cpointId).first << ", ";
     cpointId++;
     }
   std::cout << std::endl;
@@ -236,7 +236,7 @@ template<class TCell> int TestQECellInterface(std::string name, TCell *aCell)
     = cell2->InternalPointIdsEnd();
   while (ppointId != pendId)
     {
-    std::cout << *ppointId << ", ";
+    std::cout << (*ppointId).first << ", ";
     ppointId++;
     }
   std::cout << std::endl;
@@ -250,7 +250,7 @@ template<class TCell> int TestQECellInterface(std::string name, TCell *aCell)
     = cell->InternalPointIdsEnd();
   while (pxpointId != pxendId)
     {
-    std::cout << *pxpointId << ", ";
+    std::cout << (*pxpointId ).first<< ", ";
     pxpointId++;
     }
   std::cout << std::endl;

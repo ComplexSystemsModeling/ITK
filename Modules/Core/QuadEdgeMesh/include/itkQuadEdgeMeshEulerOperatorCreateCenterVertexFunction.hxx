@@ -63,7 +63,7 @@ QuadEdgeMeshEulerOperatorCreateCenterVertexFunction< TMesh, TQEType >::Evaluate(
   while ( lit != e->EndGeomLnext() )
     {
     QEType *g = lit.Value();
-    vec += this->m_Mesh->GetVector( g->GetOrigin() );
+    vec += this->m_Mesh->GetVector( g->GetOrigin().first );
     sum++;
     m_AssocBary[g] = pid;
     lit++;
@@ -80,16 +80,16 @@ QuadEdgeMeshEulerOperatorCreateCenterVertexFunction< TMesh, TQEType >::Evaluate(
   PointIdentifier tempPoint;
 
   // create edges and faces
-  tempPoint = e->GetDestination();
+  tempPoint = e->GetDestination().first;
   this->m_Mesh->AddFaceTriangle(this->m_NewPointID,
-                                e->GetOrigin(),
+                                e->GetOrigin().first,
                                 tempPoint);
   QEType *edgeRef = this->m_Mesh->FindEdge(this->m_NewPointID, tempPoint);
   while ( !edgeRef->IsLeftSet() )
     {
-    tempPoint = edgeRef->GetLnext()->GetDestination();
+    tempPoint = edgeRef->GetLnext()->GetDestination().first;
     this->m_Mesh->AddFaceTriangle(this->m_NewPointID,
-                                  edgeRef->GetLnext()->GetOrigin(),
+                                  edgeRef->GetLnext()->GetOrigin().first,
                                   tempPoint);
     edgeRef = this->m_Mesh->FindEdge(this->m_NewPointID, tempPoint);
     }

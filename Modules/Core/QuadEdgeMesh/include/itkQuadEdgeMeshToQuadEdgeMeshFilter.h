@@ -224,7 +224,7 @@ void CopyMeshToMeshCells(const TInputMesh *in, TOutputMesh *out)
         InputPointsIdInternalIterator pit = pe->InternalPointIdsBegin();
         while ( pit != pe->InternalPointIdsEnd() )
           {
-          points.push_back( ( *pit ) );
+          points.push_back( ( *pit ).first );
           ++pit;
           }
         out->AddFaceWithSecurePointList(points, false);
@@ -254,8 +254,8 @@ void CopyMeshToMeshEdgeCells(const TInputMesh *in, TOutputMesh *out)
       InputEdgeCellType *pe = dynamic_cast< InputEdgeCellType * >( ecIt.Value() );
       if ( pe )
         {
-        out->AddEdgeWithSecurePointList( pe->GetQEGeom()->GetOrigin(),
-                                         pe->GetQEGeom()->GetDestination() );
+        out->AddEdgeWithSecurePointList( pe->GetQEGeom()->GetOrigin().first,
+                                         pe->GetQEGeom()->GetDestination().first );
         }
       ecIt++;
       }

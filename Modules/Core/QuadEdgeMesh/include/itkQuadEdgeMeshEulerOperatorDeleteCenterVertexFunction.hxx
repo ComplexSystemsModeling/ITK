@@ -60,7 +60,7 @@ QuadEdgeMeshEulerOperatorDeleteCenterVertexFunction< TMesh, TQEType >::Evaluate(
       itkDebugMacro("DeleteVertex requires a full one-ring, i.e. no holes.");
       return ( (QEType *)0 );
       }
-    pList.push_back( one_edge->GetDestination() );
+    pList.push_back( one_edge->GetDestination().first );
     }
 
   // Condition: There are at least two distinct facets incident to the facets
@@ -97,12 +97,12 @@ QuadEdgeMeshEulerOperatorDeleteCenterVertexFunction< TMesh, TQEType >::Evaluate(
   // let's do the job now.
   QEType *h = g->GetLprev();
   QEType *temp;
-  this->m_OldPointID = g->GetDestination();
+  this->m_OldPointID = g->GetDestination().first;
   this->m_Mesh->LightWeightDeleteEdge(g);
   g = h->GetLnext();
   while ( g != h )
     {
-    while ( ( g->GetDestination() != this->m_OldPointID ) && ( g != h ) )
+    while ( ( g->GetDestination().first != this->m_OldPointID ) && ( g != h ) )
       {
       g = g->GetLnext();
       }

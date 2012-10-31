@@ -85,8 +85,8 @@ QuadricDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >
 QuadricDecimationQuadEdgeMeshFilter< TInput, TOutput, TCriterion >
 ::Relocate(OutputQEType *iEdge)
 {
-  OutputPointIdentifier id_org = iEdge->GetOrigin();
-  OutputPointIdentifier id_dest = iEdge->GetDestination();
+  OutputPointIdentifier id_org = iEdge->GetOrigin().first;
+  OutputPointIdentifier id_dest = iEdge->GetDestination().first;
   QuadricElementType    Q = m_Quadric[id_org] + m_Quadric[id_dest];
 
   OutputMeshPointer output = this->GetOutput();

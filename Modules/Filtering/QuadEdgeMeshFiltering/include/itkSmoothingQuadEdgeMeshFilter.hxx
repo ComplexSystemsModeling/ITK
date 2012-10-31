@@ -106,7 +106,7 @@ void SmoothingQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
         sum_coeff = 0.;
         do
           {
-          q = mesh->GetPoint( qe_it->GetDestination() );
+          q = mesh->GetPoint( qe_it->GetDestination().first );
 
           coeff = ( *m_CoefficientsMethod )( mesh, qe_it );
           sum_coeff += coeff;

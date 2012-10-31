@@ -27,6 +27,7 @@ int itkQuadEdgeMeshTest1( int , char* [] )
   typedef itk::QuadEdgeMesh< PixelType, Dimension > MeshType;
   typedef MeshType::CellTraits                      CellTraits;
   typedef CellTraits::QuadEdgeType                  QEType;
+  typedef QEType::OriginRefType                     OriginRefType;
   typedef MeshType::CellType                        CellType;
   typedef itk::QuadEdgeMeshPolygonCell< CellType >  QEPolygonCellType;
   typedef itk::QuadEdgeMeshLineCell< CellType >     QELineCellType;
@@ -171,7 +172,9 @@ int itkQuadEdgeMeshTest1( int , char* [] )
 
   // test delete face failsafe
     {
-    mesh->DeleteFace( 1299877 ); // should fail, Id too high
+    OriginRefType temp;
+    temp.first  = 1299877;
+    mesh->DeleteFace( temp ); // should fail, Id too high
     }
 
   // Test GetEdge failsafe

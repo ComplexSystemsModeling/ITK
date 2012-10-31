@@ -99,8 +99,8 @@ protected:
         {
         // cell_id = qe_it->GetLeft();
         qe_it2 = qe_it->GetOnext();
-        q0 = output->GetPoint( qe_it->GetDestination() );
-        q1 = output->GetPoint( qe_it2->GetDestination() );
+        q0 = output->GetPoint( qe_it->GetDestination().first );
+        q1 = output->GetPoint( qe_it2->GetDestination().first );
 
         // Compute Angle;
         sum_theta += static_cast< OutputCurvatureType >(

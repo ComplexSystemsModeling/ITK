@@ -79,9 +79,9 @@ protected:
 
     OutputPointIdentifier id[3];
 
-    id[0] = iQE1->GetOrigin();
-    id[1] = iQE1->GetDestination();
-    id[2] = iQE2->GetDestination();
+    id[0] = iQE1->GetOrigin().first;
+    id[1] = iQE1->GetDestination().first;
+    id[2] = iQE2->GetDestination().first;
 
     OutputPointType p[3];
 

@@ -77,7 +77,7 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
   while( it != end )
     {
-    this->m_BoundaryPtMap[ it.Value()->GetOrigin() ] = i;
+    this->m_BoundaryPtMap[ it.Value()->GetOrigin().first ] = i;
     ++it;
     ++i;
     }
@@ -121,8 +121,8 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::ComputeLongestBorder()
       {
       InputQEType* t_edge = e_it.Value();
 
-      InputPointIdentifier id_org = t_edge->GetOrigin();
-      InputPointIdentifier id_dest = t_edge->GetDestination();
+      InputPointIdentifier id_org = t_edge->GetOrigin().first;
+      InputPointIdentifier id_dest = t_edge->GetDestination().first;
 
       InputPointType org = input->GetPoint( id_org );
       InputPointType dest = input->GetPoint( id_dest );
@@ -383,8 +383,8 @@ BorderQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
         it != bdryEdge->EndGeomLnext();
         ++it, ++i )
     {
-    org = it.Value()->GetOrigin();
-    dest = it.Value()->GetDestination();
+    org = it.Value()->GetOrigin().first;
+    dest = it.Value()->GetDestination().first;
 
     PtOrg = input->GetPoint(org);
     PtDest = input->GetPoint(dest);

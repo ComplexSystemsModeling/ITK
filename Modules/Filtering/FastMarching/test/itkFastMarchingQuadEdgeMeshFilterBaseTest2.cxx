@@ -31,7 +31,7 @@ int itkFastMarchingQuadEdgeMeshFilterBaseTest2( int , char * [] )
   typedef itk::QuadEdgeMeshExtendedTraits <
     PixelType,  // type of data for vertices
     Dimension,  // geometrical dimension of space
-    2,          // Mac topological dimension of a cell
+    2,          // Max topological dimension of a cell
     CoordType,  // type for point coordinate
     CoordType,  // type for interpolation weight
     PixelType,  // type of data for cell

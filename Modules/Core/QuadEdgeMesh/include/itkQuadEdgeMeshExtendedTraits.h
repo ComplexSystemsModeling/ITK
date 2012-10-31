@@ -108,10 +108,13 @@ public:
   typedef std::set< CellIdentifier > PointCellLinksContainer;
 
   /** Quad edge typedefs. */
-  typedef GeometricalQuadEdge< PointIdentifier, CellIdentifier, PrimalDataType, DualDataType > QEPrimal;
-  typedef typename QEPrimal::DualType                                                          QEDual;
-  typedef typename QEPrimal::OriginRefType                                                     VertexRefType;
-  typedef typename QEPrimal::DualOriginRefType                                                 FaceRefType;
+  typedef GeometricalQuadEdge<
+    std::pair< PointIdentifier, CellIdentifier  >,
+    std::pair< CellIdentifier,  PointIdentifier >,
+    PrimalDataType, DualDataType >                    QEPrimal;
+  typedef typename QEPrimal::DualType                 QEDual;
+  typedef typename QEPrimal::OriginRefType            VertexRefType;
+  typedef typename QEPrimal::DualOriginRefType        FaceRefType;
 
   /** The type of point used by the mesh. This should never change from
    * this setting, regardless of the mesh type. Points have an entry

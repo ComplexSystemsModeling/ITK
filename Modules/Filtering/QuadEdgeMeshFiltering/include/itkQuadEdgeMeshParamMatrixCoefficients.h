@@ -103,8 +103,8 @@ public:
    */
   InputCoordRepType operator()(const InputMeshType *iMesh, InputQEType *iEdge) const
   {
-    InputPointIdentifier id1 = iEdge->GetOrigin();
-    InputPointIdentifier id2 = iEdge->GetDestination();
+    InputPointIdentifier id1 = iEdge->GetOrigin().first;
+    InputPointIdentifier id2 = iEdge->GetDestination().first;
 
     InputPointType pt1 = iMesh->GetPoint(id1);
     InputPointType pt2 = iMesh->GetPoint(id2);
@@ -143,8 +143,8 @@ public:
    */
   InputCoordRepType operator()(const InputMeshType *iMesh, InputQEType *iEdge) const
   {
-    InputPointIdentifier id1 = iEdge->GetOrigin();
-    InputPointIdentifier id2 = iEdge->GetDestination();
+    InputPointIdentifier id1 = iEdge->GetOrigin().first;
+    InputPointIdentifier id2 = iEdge->GetDestination().first;
     InputPointType       pt1 = iMesh->GetPoint(id1);
     InputPointType       pt2 = iMesh->GetPoint(id2);
 
@@ -152,13 +152,13 @@ public:
 
     if ( iEdge->IsLeftSet() )
       {
-      InputPointIdentifier idA = iEdge->GetLnext()->GetDestination();
+      InputPointIdentifier idA = iEdge->GetLnext()->GetDestination().first;
       InputPointType       ptA = iMesh->GetPoint(idA);
       oValue += TriangleHelper< InputPointType >::Cotangent(pt1, ptA, pt2);
       }
     if ( iEdge->IsRightSet() )
       {
-      InputPointIdentifier idB = iEdge->GetRnext()->GetOrigin();
+      InputPointIdentifier idB = iEdge->GetRnext()->GetOrigin().first;
       InputPointType       ptB = iMesh->GetPoint(idB);
       oValue += TriangleHelper< InputPointType >::Cotangent(pt1, ptB, pt2);
       }
@@ -197,17 +197,17 @@ public:
    */
   InputCoordRepType operator()(const InputMeshType *iMesh, InputQEType *iEdge) const
   {
-    InputPointIdentifier id1 = iEdge->GetOrigin();
+    InputPointIdentifier id1 = iEdge->GetOrigin().first;
     InputPointType       pt1 = iMesh->GetPoint(id1);
 
-    InputPointIdentifier id2 = iEdge->GetDestination();
+    InputPointIdentifier id2 = iEdge->GetDestination().first;
     InputPointType       pt2 = iMesh->GetPoint(id2);
 
     InputCoordRepType oValue = NumericTraits< InputCoordRepType >::Zero;
 
     if ( iEdge->IsLeftSet() )
       {
-      InputPointIdentifier idA = iEdge->GetLnext()->GetDestination();
+      InputPointIdentifier idA = iEdge->GetLnext()->GetDestination().first;
       InputPointType       ptA = iMesh->GetPoint(idA);
       oValue +=
         TriangleHelper< InputPointType >::Cotangent(pt1, pt2, ptA);
@@ -215,7 +215,7 @@ public:
 
     if ( iEdge->IsRightSet() )
       {
-      InputPointIdentifier idB = iEdge->GetRnext()->GetOrigin();
+      InputPointIdentifier idB = iEdge->GetRnext()->GetOrigin().first;
       InputPointType       ptB = iMesh->GetPoint(idB);
       oValue += TriangleHelper< InputPointType >::Cotangent(pt1, pt2, ptB);
       }
@@ -287,11 +287,11 @@ public:
 
   InputCoordRepType operator()(const InputMeshType *iMesh, InputQEType *iEdge) const
   {
-    InputPointIdentifier id1 = iEdge->GetOrigin();
-    InputPointIdentifier id2 = iEdge->GetDestination();
+    InputPointIdentifier id1 = iEdge->GetOrigin().first;
+    InputPointIdentifier id2 = iEdge->GetDestination().first;
 
-    InputPointIdentifier idA = iEdge->GetLnext()->GetDestination();
-    InputPointIdentifier idB = iEdge->GetRnext()->GetOrigin();
+    InputPointIdentifier idA = iEdge->GetLnext()->GetDestination().first;
+    InputPointIdentifier idB = iEdge->GetRnext()->GetOrigin().first;
 
     InputPointType pt1 = iMesh->GetPoint(id1);
     InputPointType pt2 = iMesh->GetPoint(id2);

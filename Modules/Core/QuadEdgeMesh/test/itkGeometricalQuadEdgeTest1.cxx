@@ -27,7 +27,8 @@ public:
   typedef std::string  FaceData;
 
   typedef itk::GeometricalQuadEdge<
-     PointIdentifier, FaceIdentifier,
+     std::pair< PointIdentifier, FaceIdentifier  >,
+     std::pair< FaceIdentifier,  PointIdentifier >,
      PointData, FaceData, true >        PrimalQuadEdgeType;
 
 
@@ -63,7 +64,7 @@ int itkGeometricalQuadEdgeTest1( int , char* [] )
 
   typedef HelperType::PrimalQuadEdgeType     PrimalQuadEdgeType;
   typedef HelperType::DualQuadEdgeType       DualQuadEdgeType;
-
+  typedef DualQuadEdgeType::OriginRefType    FaceRefType;
 
     { // Define a local scope for testing constructors
 
@@ -76,7 +77,8 @@ int itkGeometricalQuadEdgeTest1( int , char* [] )
   PrimalQuadEdgeType * qe = HelperType::MakeQuadEdges();
   // this will only call the method
   // a more rigorous test woul dbe needed
-  qe->SetRight( 1 );
+  FaceRefType temp = FaceRefType( 1, 0 );
+  qe->SetRight( temp );
   qe->GetSym();
   qe->GetOprev();
   qe->GetLprev();

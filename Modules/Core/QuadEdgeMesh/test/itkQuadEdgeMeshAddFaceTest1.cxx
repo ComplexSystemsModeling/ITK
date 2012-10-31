@@ -512,11 +512,11 @@ int itkQuadEdgeMeshAddFaceTest1( int argc, char* argv[] )
       }
 
     std::cout << "Indices of the quadrangle: ["
-      << quadFace2->GetOrigin() << " "
-      << quadFace2->GetLnext()->GetOrigin() << " "
-      << quadFace2->GetLnext()->GetLnext()->GetOrigin() << " "
-      << quadFace2->GetLnext()->GetLnext()->GetLnext()->GetOrigin() << " "
-      << quadFace2->GetLnext()->GetLnext()->GetLnext()->GetLnext()->GetOrigin()
+      << quadFace2->GetOrigin().first << " "
+      << quadFace2->GetLnext()->GetOrigin().first << " "
+      << quadFace2->GetLnext()->GetLnext()->GetOrigin().first << " "
+      << quadFace2->GetLnext()->GetLnext()->GetLnext()->GetOrigin().first << " "
+      << quadFace2->GetLnext()->GetLnext()->GetLnext()->GetLnext()->GetOrigin().first
       << "]" << std::endl;
 
     std::cout << "Correct indices should be: ["
@@ -527,7 +527,7 @@ int itkQuadEdgeMeshAddFaceTest1( int argc, char* argv[] )
       << pid[0] << "]" << std::endl;
 
     std::cout << "Testing value for pid4" << std::endl;
-    if( quadFace2->GetLnext()->GetLnext()->GetLnext()->GetOrigin()
+    if( quadFace2->GetLnext()->GetLnext()->GetLnext()->GetOrigin().first
         == pid[3] )
       {
       std::cout << "Passed" << std::endl;

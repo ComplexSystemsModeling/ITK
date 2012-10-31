@@ -121,7 +121,7 @@ ParameterizationQuadEdgeMeshFilter< TInputMesh, TOutputMesh, TSolverTraits >
 
     do
       {
-      id2 = temp->GetDestination();
+      id2 = temp->GetDestination().first;
 
       it = m_BoundaryPtMap.find(id2);
 

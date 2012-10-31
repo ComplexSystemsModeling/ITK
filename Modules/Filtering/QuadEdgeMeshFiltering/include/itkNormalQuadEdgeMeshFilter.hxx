@@ -50,7 +50,7 @@ NormalQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
   do
     {
-    pt[k++] = output->GetPoint( temp->GetOrigin() );
+    pt[k++] = output->GetPoint( temp->GetOrigin().first );
     temp = temp->GetLnext();
     }
   while ( temp != edge );
@@ -118,7 +118,7 @@ NormalQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
 
   do
     {
-    cell_id = temp->GetLeft();
+    cell_id = temp->GetLeft().first;
     if ( cell_id != OutputMeshType::m_NoFace )
       {
       outputMesh->GetCellData(cell_id, &face_normal);
@@ -159,8 +159,8 @@ NormalQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
         OutputQEType *temp = edge;
         do
           {
-          pt[k] = outputMesh->GetPoint( temp->GetOrigin() );
-          if ( temp->GetOrigin() == iPId )
+          pt[k] = output->GetPoint( temp->GetOrigin().first );
+          if ( temp->GetOrigin().first == iPId )
             {
             internal_id = k;
             }

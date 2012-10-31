@@ -248,8 +248,8 @@ int itkQuadEdgeMeshEulerOperatorJoinVertexTest( int argc, char * argv[] )
   while( qe != 0 )
     {
     joinVertex->SetInput( mesh );
-    PointIdentifier id_org = qe->GetOrigin();
-    PointIdentifier id_dest = qe->GetDestination();
+    PointIdentifier id_org = qe->GetOrigin().first;
+    PointIdentifier id_dest = qe->GetDestination().first;
 
     QEType* qe_output = joinVertex->Evaluate( qe );
     JoinVertexType::EdgeStatusType status = joinVertex->GetEdgeStatus();

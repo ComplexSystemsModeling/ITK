@@ -97,8 +97,8 @@ QuadEdgeMeshEulerOperatorFlipEdgeFunction< TMesh, TQEType >::CheckStatus(QEType 
     return;
     }
 
-  if ( this->m_Mesh->FindEdge( h->GetOnext()->GetDestination(),
-                               h->GetSym()->GetOnext()->GetDestination() ) != 0 )
+  if ( this->m_Mesh->FindEdge( h->GetOnext()->GetDestination().first,
+                               h->GetSym()->GetOnext()->GetDestination().first ) != 0 )
     {
     m_EdgeStatus = EXISTING_OPPOSITE_EDGE;
     return;

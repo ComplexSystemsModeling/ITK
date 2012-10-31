@@ -178,8 +178,8 @@ protected:
       {
       qe = dynamic_cast< InputEdgeCellType * >( c_it.Value() );
       QEGeom = qe->GetQEGeom();
-      output->AddEdgeWithSecurePointList( QEGeom->GetOrigin(),
-                                          QEGeom->GetDestination() );
+      output->AddEdgeWithSecurePointList( QEGeom->GetOrigin().first,
+                                          QEGeom->GetDestination().first );
       ++c_it;
       }
 
@@ -198,7 +198,7 @@ protected:
         for ( InputPointsIdInternalIterator pit = pe->InternalPointIdsBegin();
               pit != pe->InternalPointIdsEnd(); ++pit )
           {
-          points.push_back( ( *pit ) );
+          points.push_back( ( *pit ).first );
           }
         output->AddFaceWithSecurePointList(points);
         }
@@ -231,8 +231,8 @@ protected:
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "AbsoluteTolerance2: " << m_AbsoluteTolerance2 << std::endl;
-    os << indent << "AbsoluteTolerance: " << m_AbsoluteTolerance << std::endl;
-    os << indent << "RelativeTolerance: " << m_RelativeTolerance << std::endl;
+    os << indent << "AbsoluteTolerance: "  << m_AbsoluteTolerance  << std::endl;
+    os << indent << "RelativeTolerance: "  << m_RelativeTolerance  << std::endl;
   }
 
 private:

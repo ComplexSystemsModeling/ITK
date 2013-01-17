@@ -29,7 +29,7 @@ public:
   // our types
 
   // NOTE ALEX: to extract from MeshType
-  const unsigned int dimension = 3;
+  static const unsigned int dimension = 3;
 
   typedef typename TInputMesh::Pointer             InputMeshPointerType;
 
